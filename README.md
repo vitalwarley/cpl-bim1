@@ -1,17 +1,30 @@
 
 
-Trabalho de Compiladores [IC-UFAL] [2017.2: 1BIM]
+Trabalho de Compiladores - [IC-UFAL](www.ic.ufal.br) - \[2017.2: 1BIM\]
 =======
 
 Especificação Mínima da Linguagem (entrega: 05/03)
 ------
 
-* [ ] _A linguagem deve poder ser analisada em um passo único_: ``... mais detalhes?``
+### Regras gerais
 
-* _Como regra geral, seguir a forma de análise dos trabalhos de CLP_ 
+* _A linguagem deve poder ser analisada em um passo único._
 
-* _Especificar a **estrutura** geral de um programa, indicando onde podem ser declaradas funções, variáveis,
-  instruções_
+    * Isso significa que o ANALISADOR LÉXICO atuará como uma subrotina, chamada pelo ANALISADOR SINTÁTICO 
+    quando este este necessitar de mais um TOKEN.
+
+* _Como regra geral, seguir a forma de análise dos trabalhos de CLP._ 
+    * Ver capítulo 5 (até qual?) do livro Conceitos de Linguagens de Programação, de R Sebesta.
+    * Por exemplo, capítulo 5 apresenta **nomes, vinculações e escopo**. É pra especificar a linguagem
+      seguindo isso.
+
+* [ ] _Especificar a **estrutura** geral de um programa, indicando onde podem ser declaradas funções, variáveis,
+  instruções._
+    * Ver item anterior.
+    * Ver doc no OVERLEAF. Subir PDF pra cá também.
+    * A questão principal aqui é: **como especificar?**
+
+### Regras específicas
 
 * _A especificação de tipos deve ser estática, com no mínimo o seguinte conjunto de tipos de dados:_
     * inteiro;
@@ -20,6 +33,7 @@ Especificação Mínima da Linguagem (entrega: 05/03)
     * booleano;
     * cadeia de caracteres;
     * arranjos unidimensionais.
+    * mais algum? Verificar isso depois de especificar os anteriores.
 
 * **Para o item acima, especificar quais as operações de cada tipo.**
 
@@ -58,6 +72,7 @@ Especificação Mínima da Linguagem (entrega: 05/03)
 
 * _Funções_
 
+### Exemplos a serem criados
 * _Incluir os seguintes programas exemplos, que deverão ser testados usando o analisador léxico_:
     * alô mundo;
     * listar os elementos da série de Fibonacci até um valor limite, separados por vírgula, implementada em
