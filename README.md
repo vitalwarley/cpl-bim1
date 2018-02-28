@@ -84,5 +84,24 @@ Especificação Mínima da Linguagem (entrega: 05/03)
 Especificação dos Tokens (entrega: 05/03)
 ------
 
+* [ ] _Especificar a linguagem de programação em que os analisadores léxico e sintático serão implementados._
+
+* [ ] _Especificar a enumeração com as categorias dos **tokens** a ser **obrigatoriamente** usada nos 
+  analisadores léxico e sintático, usando a sintaxe da linguagem escolhida para a implementação dos 
+  analisadores; nomes simbólicos de até 10 caracteres._
+
+* [ ] _Especificar em dois grupos **distintos**:_
+    * tabela com nomes das expressões e as expressão regulares auxiliares, que não representam terminais
+      da linguagem;
+    * tabela com as categorias simbólicas dos _tokens_ e as expressões regulares dos lexemas correspondentes,
+      que representam os terminais da linguagem. 
+
+* A especificação das expressões regulares devem seguir a simplificação do padrão EBNF ISO/IEC 14977:
+  1996(E) como usada em sala de aula (nomes sem espaços e sem vírgulas entre elementos das produções); as
+  expressões regulares auxiliares funcionam como terminais das expressões associadas aos _tokens_, devendo
+  estar entre apóstrofos (') ou aspas (").
+
+
+
 Analisador Léxico (entrega: 14/03)
 ------
