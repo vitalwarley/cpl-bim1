@@ -17,29 +17,31 @@ Especificação Mínima da Linguagem (entrega: 05/03)
     * Ver capítulo 5 (até qual?) do livro Conceitos de Linguagens de Programação, de R Sebesta.
     * Por exemplo, capítulo 5 apresenta **nomes, vinculações e escopo**. É pra especificar a linguagem
       seguindo isso.
+    * **PEDIR AJUDA NESSE ITEM. ESCLARECER FORMA DE ANÁLISE.**
 
 * [ ] _Especificar a **estrutura** geral de um programa, indicando onde podem ser declaradas funções, variáveis,
   instruções._
     * Ver item anterior.
     * Ver doc no OVERLEAF. Subir PDF pra cá também.
     * A questão principal aqui é: **como especificar?**
+    * **PERGUNTAR SE O QUE FIZEMOS ESTÁ OK EM RELAÇÃO A ESTRUTURA.**
 
 ### Regras específicas
 
-* _A especificação de tipos deve ser estática, com no mínimo o seguinte conjunto de tipos de dados:_
+* [x] _A especificação de tipos deve ser estática, com no mínimo o seguinte conjunto de tipos de dados:_
     * inteiro;
     * ponto flutuante;
     * caractere;
     * booleano;
     * cadeia de caracteres;
     * arranjos unidimensionais.
-    * mais algum? Verificar isso depois de especificar os anteriores.
+    * [ ] mais algum? Verificar isso depois de especificar os anteriores.
 
-* **Para o item acima, especificar quais as operações de cada tipo.**
+* [x] **Para o item acima, especificar quais as operações de cada tipo.**
 
-* _Especificar as constantes literais de cada tipo_
+* [x] _Especificar as constantes literais de cada tipo_
 
-* _Conjunto **mínimo** de operadores:_
+* [ ] _Conjunto **mínimo** de operadores:_
     * aritméticos: para tipos numéricos
         * aditivos, multiplicativos;
         * unário negativo;
@@ -53,9 +55,9 @@ Especificação Mínima da Linguagem (entrega: 05/03)
         * tipos numéricos e booleanos: se concatenados a um caractere ou cadeia decaracteres, devem ser
           convertidos para cadeia de caracteres.
 
-* **Para o item acima, especificar ordem de precedência e associatividade.**
+* [ ] **Para o item acima, especificar ordem de precedência e associatividade.**
 
-* _Instruções_:
+* [x] _Instruções_:
     * estrutura condicional de uma e duas vias;
     * estrutura iterativa com controle lógico;
     * estrutura iterativa controlada por contador com passo igual a um caso omitido;
@@ -66,14 +68,14 @@ Especificação Mínima da Linguagem (entrega: 05/03)
           casas decimais (_default_: 2 casas); quando presente, o formato deve preceder o elemento a ser
           impresso.
 
-* **Para o item acima, especificar natureza e formas de controle.**
+* [ ] **Para o item acima, especificar natureza e formas de controle.**
 
-* _Atribuição pode ser instrução ou operador (especificar)_
+* [x] _Atribuição pode ser instrução ou operador (especificar)_
 
-* _Funções_
+* [ ] _Funções_
 
 ### Exemplos a serem criados
-* _Incluir os seguintes programas exemplos, que deverão ser testados usando o analisador léxico_:
+* [x] _Incluir os seguintes programas exemplos, que deverão ser testados usando o analisador léxico_:
     * alô mundo;
     * listar os elementos da série de Fibonacci até um valor limite, separados por vírgula, implementada em
       uma função usando iteração com controle lógico; o limite deve ser lido no programa principal;
