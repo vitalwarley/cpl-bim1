@@ -17,14 +17,14 @@ Especificação Mínima da Linguagem (entrega: 05/03)
     * Ver capítulo 5 (até qual?) do livro Conceitos de Linguagens de Programação, de R Sebesta.
     * Por exemplo, capítulo 5 apresenta **nomes, vinculações e escopo**. É pra especificar a linguagem
       seguindo isso.
-    * **PEDIR AJUDA NESSE ITEM. ESCLARECER FORMA DE ANÁLISE.**
+    * **ESCLARECER FORMA DE ANÁLISE. O que fizemos está correto?**
 
 * [ ] _Especificar a **estrutura** geral de um programa, indicando onde podem ser declaradas funções, variáveis,
   instruções._
     * Ver item anterior.
     * Ver doc no OVERLEAF. Subir PDF pra cá também.
     * A questão principal aqui é: **como especificar?**
-    * **PERGUNTAR SE O QUE FIZEMOS ESTÁ OK EM RELAÇÃO A ESTRUTURA.**
+    * **PERGUNTAR SE O QUE FIZEMOS ESTÁ OK EM RELAÇÃO A ESTRUTURA.**
 
 ### Regras específicas
 
@@ -39,23 +39,23 @@ Especificação Mínima da Linguagem (entrega: 05/03)
 
 * [x] **Para o item acima, especificar quais as operações de cada tipo.**
 
-* [x] _Especificar as constantes literais de cada tipo_
+* [x] _Especificar as constantes literais de cada tipo._
 
 * [ ] _Conjunto **mínimo** de operadores:_
-    * aritméticos: para tipos numéricos
+    * [x] aritméticos: para tipos numéricos
         * aditivos, multiplicativos;
         * unário negativo;
-    * relacionais:
+    * [x] relacionais:
         * para tipos numéricos, caracteres e cadeias de caracteres: todos;
         * para tipos booleanos: igualdade e desigualdade;
-    * lógicos: para o tipo booleano
+    * [x] lógicos: para o tipo booleano
         * negação, conjunção e disjunção;
-    * concatenação: geram cadeias de caracteres
-        * tipos caracteres e cadeias de caracteres;
-        * tipos numéricos e booleanos: se concatenados a um caractere ou cadeia decaracteres, devem ser
+    * [ ] concatenação: geram cadeias de caracteres
+        * [x] tipos caracteres e cadeias de caracteres;
+        * [ ] tipos numéricos e booleanos: se concatenados a um caractere ou cadeia decaracteres, devem ser
           convertidos para cadeia de caracteres.
 
-* [ ] **Para o item acima, especificar ordem de precedência e associatividade.**
+* [x] **Para o item acima, especificar ordem de precedência e associatividade.**
 
 * [x] _Instruções_:
     * estrutura condicional de uma e duas vias;
@@ -69,10 +69,11 @@ Especificação Mínima da Linguagem (entrega: 05/03)
           impresso.
 
 * [ ] **Para o item acima, especificar natureza e formas de controle.**
+    * Não entendi direito...
 
 * [x] _Atribuição pode ser instrução ou operador (especificar)_
 
-* [ ] _Funções_
+* [x] _Funções_
 
 ### Exemplos a serem criados
 * [x] _Incluir os seguintes programas exemplos, que deverão ser testados usando o analisador léxico_:
