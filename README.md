@@ -85,7 +85,7 @@ Especificação Mínima da Linguagem (entrega: 05/03)
 Especificação dos Tokens (entrega: 05/03)
 ------
 
-* [ ] _Especificar a linguagem de programação em que os analisadores léxico e sintático serão implementados._
+* [x] _Especificar a linguagem de programação em que os analisadores léxico e sintático serão implementados._
 
 * [ ] _Especificar a enumeração com as categorias dos **tokens** a ser **obrigatoriamente** usada nos 
   analisadores léxico e sintático, usando a sintaxe da linguagem escolhida para a implementação dos 
