@@ -14,17 +14,15 @@ Especificação Mínima da Linguagem (entrega: 05/03)
     quando este este necessitar de mais um TOKEN.
 
 * _Como regra geral, seguir a forma de análise dos trabalhos de CLP._ 
-    * Ver capítulo 5 (até qual?) do livro Conceitos de Linguagens de Programação, de R Sebesta.
+    * Ver capítulo 5 (o 6 também, talvez?) do livro Conceitos de Linguagens de Programação, de R Sebesta.
     * Por exemplo, capítulo 5 apresenta **nomes, vinculações e escopo**. É pra especificar a linguagem
       seguindo isso.
-    * **ESCLARECER FORMA DE ANÁLISE. O que fizemos está correto?**
 
-* [ ] _Especificar a **estrutura** geral de um programa, indicando onde podem ser declaradas funções, variáveis,
+* [x] _Especificar a **estrutura** geral de um programa, indicando onde podem ser declaradas funções, variáveis,
   instruções._
     * Ver item anterior.
-    * Ver doc no OVERLEAF. Subir PDF pra cá também.
-    * A questão principal aqui é: **como especificar?**
-    * **PERGUNTAR SE O QUE FIZEMOS ESTÁ OK EM RELAÇÃO A ESTRUTURA.**
+
+* [ ] Subir DOC no OVERLEAF pra cá. 
 
 ### Regras específicas
 
@@ -50,9 +48,9 @@ Especificação Mínima da Linguagem (entrega: 05/03)
         * para tipos booleanos: igualdade e desigualdade;
     * [x] lógicos: para o tipo booleano
         * negação, conjunção e disjunção;
-    * [ ] concatenação: geram cadeias de caracteres
+    * [x] concatenação: geram cadeias de caracteres
         * [x] tipos caracteres e cadeias de caracteres;
-        * [ ] tipos numéricos e booleanos: se concatenados a um caractere ou cadeia decaracteres, devem ser
+        * [x] tipos numéricos e booleanos: se concatenados a um caractere ou cadeia decaracteres, devem ser
           convertidos para cadeia de caracteres.
 
 * [x] **Para o item acima, especificar ordem de precedência e associatividade.**
@@ -69,7 +67,7 @@ Especificação Mínima da Linguagem (entrega: 05/03)
           impresso.
 
 * [ ] **Para o item acima, especificar natureza e formas de controle.**
-    * Não entendi direito...
+    * Isso signica o que mesmo?
 
 * [x] _Atribuição pode ser instrução ou operador (especificar)_
 
