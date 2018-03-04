@@ -67,7 +67,8 @@ Especificação Mínima da Linguagem (entrega: 05/03)
           impresso.
 
 * [ ] **Para o item acima, especificar natureza e formas de controle.**
-    * Isso signica o que mesmo?
+    * Natureza diz respeito aos testes na expressão, se é pré ou pós. Outros?
+    * Formas de controle diz respeito a possibilidade de sair de um loop ou passar para o próximo contador.
 
 * [x] _Atribuição pode ser instrução ou operador (especificar)_
 
