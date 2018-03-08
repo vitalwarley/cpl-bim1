@@ -88,11 +88,11 @@ Especificação dos Tokens (entrega: 05/03)
 
 * [x] _Especificar a linguagem de programação em que os analisadores léxico e sintático serão implementados._
 
-* [ ] _Especificar a enumeração com as categorias dos **tokens** a ser **obrigatoriamente** usada nos 
+* [X] _Especificar a enumeração com as categorias dos **tokens** a ser **obrigatoriamente** usada nos 
   analisadores léxico e sintático, usando a sintaxe da linguagem escolhida para a implementação dos 
   analisadores; nomes simbólicos de até 10 caracteres._
 
-* [ ] _Especificar em dois grupos **distintos**:_
+* [X] _Especificar em dois grupos **distintos**:_
     * tabela com nomes das expressões e as expressão regulares auxiliares, que não representam terminais
       da linguagem;
     * tabela com as categorias simbólicas dos _tokens_ e as expressões regulares dos lexemas correspondentes,
@@ -107,3 +107,16 @@ Especificação dos Tokens (entrega: 05/03)
 
 Analisador Léxico (entrega: 14/03)
 ------
+
+* _O nome do programa analisado deve ser passado na linha de commando._
+   * Como em: _anLex program.hp_ (onde **anLex** é o Analisador Léxico e **program.hp** é o programa na linguagem especificada)
+
+* _Deve ser implementado para fazer a análise "on the fly", devolvendo o token identificado via um método/função cuja assinatura seja `Token nextToken();` para o analisador sintático._
+   * Isto é, **NÃO** como um passo em separado que faça a análise léxica toda antes da análise sintática.
+   * **Token** deverá ser uma struct ou class contendo os dados do token.
+   
+* _Deve ser implementado um programa para teste que execute o analisador léxico, listando para cada  token, nesta ordem, sua posição (linha e coluna) no programa exemplo, sua categoria (o número e nome associado na enumeração) e seu valor léxico, que deverá estar presente nos objetos **Token**._
+   * O formato de impressão deve seguir o modelo a seguir (em C): **`"[%03d, %03d] (%04d, %10s) {%s}"`**
+   * Caso o código numérico das categorias possa ultrapassar 4 dígitos, usar númer par supero mais próximo.
+
+* _Devem ser apresentados os resultados dos testes para os três programas previamente solicitados._
