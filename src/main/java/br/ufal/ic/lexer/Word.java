@@ -1,13 +1,13 @@
 package br.ufal.ic.lexer;
 
-/* Classe usada para palavras reservadas e identificadores. */
+/* Class used to reserved words and identifiers. */
 public class Word extends Token {
     public final String lexeme;
     public final TokenCategory category;
 
-    public Word(TokenCategory t, String lexeme) {
-        super(t);
-        this.category = t;
+    public Word(TokenCategory tag, String lexeme) {
+        super(tag);
+        this.category = tag;
         this.lexeme = lexeme;
     }
 }

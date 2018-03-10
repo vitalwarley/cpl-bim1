@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
 
-/* Classe principal, o analisador léxico. */
+/* Main class, the lexical analyser. */
 public class Lexer {
 
     private int row;
@@ -16,7 +16,8 @@ public class Lexer {
     private String current;
     private boolean rollback;
 
-    private Hashtable<String, TokenCategory> words = new Hashtable<>(); // guardar as palavras reservadas e identificadores lidos
+    /* store reserved words and identifiers */
+    private Hashtable<String, TokenCategory> words = new Hashtable<>();
 
     public Lexer() {
 
@@ -25,7 +26,7 @@ public class Lexer {
         this.current = "";
         this.rollback = false;
 
-        // set reserved words
+        /* set reserved words */
         reserve( new Word(TokenCategory.TK_DEFMOD, "defmod"));
         reserve( new Word(TokenCategory.TK_DEF, "def"));
         reserve( new Word(TokenCategory.TK_DO, "do"));
@@ -52,32 +53,21 @@ public class Lexer {
 
     private void reserve(Word t) { words.put(t.lexeme, t.category); }
 
-    public Token scan() {
-        // skip white space and count lines
-        // handle numbers
-        // handle reserved words and ids
-        // Token t = new Token(TokenCategory(lookAhead)); // como inicializar TokenCategory com char da entrada?
-        // acho que precisamos de um HashMap para, de acordo com a entrada (nao o lookAhead, pq é apenas um char),
-        // buscar seu TokenCategory
-        // lookAhead = ' '; // initialization
-        return null;
-    }
-
     public Token nextToken() throws IOException {
         Token nextToken = new Token(TokenCategory.TK_EOF);
 
-        while(this.file.available() > 0){
+        while (this.file.available() > 0) {
 
             boolean found = false;
-            if(!rollback) {
+            if (!rollback) {
                 current = current + String.valueOf((char) file.read());
-            }else {
+            } else {
                 rollback = false;
             }
 
             this.column++;
 
-            switch (current){
+            switch (current) {
                 case " ": case "\t":
                     current = "";
                     continue;
@@ -136,9 +126,9 @@ public class Lexer {
                     found = true;
                     break;
                 case "=":
-                    if((char) file.read() == '='){
+                    if ((char) file.read() == '=') {
                         nextToken = new Token(TokenCategory.TK_REL2, row, column, current);
-                    }else{
+                    } else {
                         nextToken = new Token(TokenCategory.TK_ATR, row, column, current);
                     }
                     current = "";
@@ -175,7 +165,7 @@ public class Lexer {
                     found = true;
                     break;
                 case "#":
-                    while((char)file.read() != '\n');
+                    while((char) file.read() != '\n');
 
                     this.row++;
                     this.column = -1;
@@ -183,13 +173,13 @@ public class Lexer {
                     continue;
                 case "\'":
                     char c = (char) file.read();
-                    while(c != '\''){
+                    while (c != '\'') {
                         column++;
                         current = current + c;
                         c = (char) file.read();
                     }
 
-                    if(current.matches("'(.?)'")){
+                    if (current.matches("'(.?)'")) {
                         nextToken = new Token(TokenCategory.TK_CTECHAR, row, column, getChar(current));
                         current = "";
                         found = true;
@@ -199,7 +189,7 @@ public class Lexer {
                 case "\"":
 
                     char d = (char) file.read();
-                    while(d != '\"'){
+                    while (d != '\"') {
                         column++;
                         current = current + d;
                         d = (char) file.read();
@@ -209,26 +199,26 @@ public class Lexer {
 
                     System.out.println(current);
 
-                    if(current.matches("\"(.*)\"")){
+                    if (current.matches("\"(.*)\"")) {
                         nextToken = new Token(TokenCategory.TK_CTESTR, row, column, getChar(current));
                         current = "";
                         found = true;
                     }
                     break;
             }
-            if(found) {
+            if (found) {
                 return nextToken;
-            }else{
-                if(current.matches("\\d+")){
+            } else {
+                if (current.matches("\\d+")) {
                     char number = (char) file.read();
 
-                    while(Character.isDigit(number)){
+                    while (Character.isDigit(number)) {
                         column++;
                         current = current + number;
                         number = (char) file.read();
                     }
 
-                    if(number != '.'){
+                    if (number != '.') {
                         rollback = true;
                         nextToken = new Token(TokenCategory.TK_CTEINT, row, column, current);
                         current = "";
@@ -236,7 +226,7 @@ public class Lexer {
                     }
 
                     number = (char) file.read();
-                    while (Character.isDigit(number)){
+                    while (Character.isDigit(number)) {
                         column++;
                         current = current + number;
                         number = (char) file.read();
@@ -249,14 +239,14 @@ public class Lexer {
                     return nextToken;
                 }
 
-                if(current.matches("[a-zA-Z][\\d[a-z][A-Z]]*")){
-                    if(words.containsKey(current)){
+                if (current.matches("[a-zA-Z][\\d[a-z][A-Z]]*")) {
+                    if (words.containsKey(current)) {
                         nextToken = new Token(words.get(current), row, column, current);
                         current = "";
                         return nextToken;
-                    }else{
+                    } else {
                         char e = (char) file.read();
-                        while(Character.isLetterOrDigit(e)){
+                        while (Character.isLetterOrDigit(e)) {
                             column++;
                             current = current + e;
                             e = (char) file.read();
@@ -264,7 +254,7 @@ public class Lexer {
 
                         rollback = true;
 
-                        if(words.containsKey(current)){
+                        if (words.containsKey(current)) {
                             nextToken = new Token(words.get(current), row, column, current);
                             current = Character.toString(e);
                             return nextToken;
@@ -285,13 +275,13 @@ public class Lexer {
         boolean DEBUG = true;
         Lexer lexer = new Lexer();
 
-        if(!DEBUG){
-            if(args.length <= 0){
+        if (!DEBUG) {
+            if (args.length <= 0) {
                 System.err.println("Uso: hapais <arquivo>.hs --fly <opcional>");
             }
-            if (args.length > 1){
+            if (args.length > 1) {
                 String opcao = args[1];
-                if(opcao.equals("--fly")){
+                if (opcao.equals("--fly")) {
 
                 }
             }
@@ -299,13 +289,14 @@ public class Lexer {
         }
 
         try {
-            lexer.setFile(new FileInputStream("/Users/dayvsonsales/cpl-bim1/examples/shell.hs"));
+            String path = "/Users/dayvsonsales/cpl-bim1/examples/shell.hs";
+            lexer.setFile(new FileInputStream(path));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
 
         try {
-            while(lexer.getFile().available() > 0) {
+            while (lexer.getFile().available() > 0) {
                 System.out.println(lexer.nextToken());
             }
         } catch (IOException e) {
