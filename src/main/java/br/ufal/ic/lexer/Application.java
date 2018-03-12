@@ -28,7 +28,7 @@ public class Application {
             String nome = args[0];
         }
 
-        if(DEBUG){
+        if (DEBUG) {
             System.out.println("Inicio hello.hs");
             readFiles("/Users/dayvsonsales/cpl-bim1/examples/hello.hs", new Lexer());
             System.out.println("Fim hello.hs");
@@ -38,10 +38,13 @@ public class Application {
             System.out.println("Inicio shell.hs");
             readFiles("/Users/dayvsonsales/cpl-bim1/examples/shell.hs", new Lexer());
             System.out.println("Fim shell.hs");
+            System.out.println("Inicio test.hs");
+            readFiles("/Users/dayvsonsales/cpl-bim1/examples/test.hs", new Lexer());
+            System.out.println("Fim test.hs");
         }
     }
 
-    private static void readFiles(String name, Lexer lexer){
+    private static void readFiles(String name, Lexer lexer) {
         try {
             String path = name;
             lexer.setFile(new FileInputStream(path));

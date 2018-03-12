@@ -73,7 +73,7 @@ public class Lexer {
                     found = true;
                     break;
                 case "#":
-                    while ((char) file.read() != '\n') ;
+                    while ((char) file.read() != '\n' && this.file.available() > 0) ;
 
                     this.row++;
                     this.column = 0;
@@ -81,7 +81,7 @@ public class Lexer {
                     continue;
                 case "\'":
                     char c = (char) file.read();
-                    while (c != '\'') {
+                    while (c != '\'' && this.file.available() > 0) {
                         column++;
                         current = current + c;
                         c = (char) file.read();
@@ -99,7 +99,7 @@ public class Lexer {
                     break;
                 case "\"":
                     char d = (char) file.read();
-                    while (d != '\"') {
+                    while (d != '\"' && this.file.available() > 0) {
                         column++;
                         current = current + d;
                         d = (char) file.read();
