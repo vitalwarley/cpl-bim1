@@ -25,10 +25,10 @@ public class Lexer {
 
     public Lexer() {
 
-        this.row = 1;
-        this.column = 0;
-        this.current = "";
-        this.rollback = false;
+        this.row = 1;           /* Row being read */
+        this.column = 0;        /* Column that 'current' is at */
+        this.current = "";      /* Default */
+        this.rollback = false;  /* Will tell us if we have to rollback the reading in some cases */
 
         /* set reserved words */
         setReservedWords();
@@ -37,19 +37,24 @@ public class Lexer {
     public Token nextToken() throws IOException {
         Token nextToken = null;
 
-        while (this.file.available() > 0) {
+        while (this.file.available() > 0) {     /* While we have something to read... */
 
-            boolean found = false;
+            boolean found = false;  /* Found nothing, yet... */
 
-            if (!rollback) {
+            if (!rollback) {    /* At first, don't to rollback: we are trying to read a new lexeme */
                 current = current + String.valueOf((char) file.read());
+                /* At first, current is empty, so... */
+                /* 'current' gets the char that we are gonna read */
+                /* Because we are trying to read a new lexeme, we get the next char ahead. */
+                /* Here we are accumulating the chars we read */
             } else {
                 rollback = false;
             }
 
-            this.column++;
+            this.column++;      /* Reading first column */
 
-            switch (current) {
+            switch (current) {  /* Here we decide what to do according to what we have read previously */
+                /* In case we read spaces, tabs, or newlines we just continue to reading */
                 case " ":
                 case "\t":
                     current = "";
@@ -57,34 +62,66 @@ public class Lexer {
                 case "\n":
                 case "\r":
                     current = "";
-                    this.row++;
+                    this.row++; /* But we increment a row each newline */
                     this.column = 0;
                     continue;
                 case "=":
-                    char t = (char) file.read();
-                    if (t == '=') {
+                    /* Read again */
+                    char t = (char) file.read();    /* We cast to char because file.read() returns the data in bytes. */
+                    if (t == '=') {     /* If next lexeme is '=', we create a new Token */
+                        /**
+                         *  TK_REL2 is the TokenCategory for '=='
+                         *  row, column are straightforward
+                         *  current is the lexeme (we really don't need it, but whatever)
+                        **/
                         nextToken = new Token(TokenCategory.TK_REL2, row, column, current);
-                        current = "";
+                        current = "";   /* After read, get back to default */
                     } else {
+                        /**
+                         * Because next char after '=' is not other '=', the '=' must be a assign operator.
+                         * TK_ATR is the TokenCategory for '='
+                         */
                         nextToken = new Token(TokenCategory.TK_ATR, row, column, current);
                         current = Character.toString(t);
+                        /**
+                         *   Here we HAVE to rollback... why?
+                         *   You see, in line 70 we read the next char to see if it was other '='.
+                         *   As it is not, we have to stop there to in line 44 do what we need to do.
+                         */
                         rollback = true;
                     }
                     found = true;
                     break;
-                case "#":
-                    while ((char) file.read() != '\n' && this.file.available() > 0) ;
+                case "#":   /* This is a comment in Hapais. */
+                    /* There fore, lets read till the end of line AND till there is something to read */
+                    while ((char) file.read() != '\n' && this.file.available() > 0); /* This second term prevent loops*/
 
                     this.row++;
                     this.column = 0;
                     current = "";
                     continue;
-                case "\'":
-                    char c = (char) file.read();
-                    while (c != '\'' && this.file.available() > 0) {
-                        column++;
-                        current = current + c;
-                        c = (char) file.read();
+                case "\'":  /* This simple quote can define a new char or be in a ctStr */
+                    char c = (char) file.read(); /* Read next lexeme */
+
+                    /**
+                     *  In case c is a escape AND there is something to read, we check next lexeme.
+                     *  It can be: \n, \t, \r, \', \" (others??)
+                     *  So we add it to current and read next lexeme.
+                     */
+                    if (c == '\\' && this.file.available() > 0) {
+                        // check the cases
+                    } else {
+                        /**
+                         * While next char isn't a closing quote AND there is something to read...
+                         * Column++ to read the next lexeme.
+                         * current is accumulating new chars (lexemes)
+                         * next lexeme is casted to the actual c
+                         */
+                        while (c != '\'' && this.file.available() > 0) {
+                            column++;
+                            current = current + c;
+                            c = (char) file.read();
+                        }
                     }
 
                     column++;
