@@ -1,5 +1,5 @@
 defmod AloMundo do
   def void main() do
-   	print("Alô mundo!");
+   	print("Alo mundo!");
   end
 endmod

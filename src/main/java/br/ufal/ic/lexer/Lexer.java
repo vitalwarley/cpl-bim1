@@ -1,7 +1,6 @@
 package br.ufal.ic.lexer;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Hashtable;
 
@@ -19,46 +18,29 @@ public class Lexer {
     /* store reserved words and identifiers */
     private Hashtable<String, TokenCategory> words = new Hashtable<>();
 
+    private final String REGEX_CHAR = "\'(.?)\'";
+    private final String REGEX_STR = "[\\\\d a-zA-Z_\\.,:;!+-\\?<>=\\(\\)\\[\\]{}\\'\"@%\\^\\\\]*";
+    private final String REGEX_IDENTIFIER = "[a-zA-Z][\\d[a-z][A-Z]]*";
+    private final String REGEX_NUMBER = "\\d+";
+
     public Lexer() {
 
         this.row = 1;
-        this.column = -1;
+        this.column = 0;
         this.current = "";
         this.rollback = false;
 
         /* set reserved words */
-        reserve( new Word(TokenCategory.TK_DEFMOD, "defmod"));
-        reserve( new Word(TokenCategory.TK_DEF, "def"));
-        reserve( new Word(TokenCategory.TK_DO, "do"));
-        reserve( new Word(TokenCategory.TK_END, "end"));
-        reserve( new Word(TokenCategory.TK_ENDMOD, "endmod"));
-        reserve( new Word(TokenCategory.TK_UNTIL, "until"));
-        reserve( new Word(TokenCategory.TK_REP, "rep"));
-        reserve( new Word(TokenCategory.TK_WHEN, "when"));
-        reserve( new Word(TokenCategory.TK_RETURN, "return"));
-        reserve( new Word(TokenCategory.TK_OTRWISE, "otherwise"));
-        reserve( new Word(TokenCategory.TK_VOID, "void"));
-        reserve( new Word(TokenCategory.TK_INT, "int"));
-        reserve( new Word(TokenCategory.TK_REAL, "real"));
-        reserve( new Word(TokenCategory.TK_STR, "str"));
-        reserve( new Word(TokenCategory.TK_BOOL, "bool"));
-        reserve( new Word(TokenCategory.TK_CHAR, "char"));
-        reserve( new Word(TokenCategory.TK_READ, "read"));
-        reserve( new Word(TokenCategory.TK_PRINT, "print"));
-        reserve( new Word(TokenCategory.TK_LTVREAD, "lastValueRead"));
-        reserve( new Word(TokenCategory.TK_TRUE, "true"));
-        reserve( new Word(TokenCategory.TK_FALSE, "false"));
-        reserve( new Word(TokenCategory.TK_NIL, "nil"));
+        setReservedWords();
     }
 
-    private void reserve(Word t) { words.put(t.lexeme, t.category); }
-
     public Token nextToken() throws IOException {
-        Token nextToken = new Token(TokenCategory.TK_EOF);
+        Token nextToken = null;
 
         while (this.file.available() > 0) {
 
             boolean found = false;
+
             if (!rollback) {
                 current = current + String.valueOf((char) file.read());
             } else {
@@ -68,107 +50,33 @@ public class Lexer {
             this.column++;
 
             switch (current) {
-                case " ": case "\t":
+                case " ":
+                case "\t":
                     current = "";
                     continue;
                 case "\n":
-                    current = "";
-                    this.row++;
-                    break;
                 case "\r":
                     current = "";
                     this.row++;
-                    this.column = -1;
+                    this.column = 0;
                     continue;
-                case ",":
-                    nextToken = new Token(TokenCategory.TK_SPTOR, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case ":":
-                    nextToken = new Token(TokenCategory.TK_DPTS, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case ";":
-                    nextToken = new Token(TokenCategory.TK_PVGL, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "(":
-                    nextToken = new Token(TokenCategory.TK_ABPAR, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case ")":
-                    nextToken = new Token(TokenCategory.TK_FCPAR, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "[":
-                    nextToken = new Token(TokenCategory.TK_ABCOL, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "]":
-                    nextToken = new Token(TokenCategory.TK_FCCOL, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "+": case "-":
-                    nextToken = new Token(TokenCategory.TK_OPA, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "*": case "/":
-                    nextToken = new Token(TokenCategory.TK_OPM, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
                 case "=":
-                    if ((char) file.read() == '=') {
+                    char t = (char) file.read();
+                    if (t == '=') {
                         nextToken = new Token(TokenCategory.TK_REL2, row, column, current);
+                        current = "";
                     } else {
                         nextToken = new Token(TokenCategory.TK_ATR, row, column, current);
+                        current = Character.toString(t);
+                        rollback = true;
                     }
-                    current = "";
-                    found = true;
-                    break;
-                case "!=":
-                    nextToken = new Token(TokenCategory.TK_REL2, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case ">": case "<": case ">=": case "<=":
-                    nextToken = new Token(TokenCategory.TK_REL, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "&&":
-                    nextToken = new Token(TokenCategory.TK_AND, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "||":
-                    nextToken = new Token(TokenCategory.TK_OR, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "~":
-                    nextToken = new Token(TokenCategory.TK_NOT, row, column, current);
-                    current = "";
-                    found = true;
-                    break;
-                case "$":
-                    nextToken = new Token(TokenCategory.TK_CONCAT, row, column, current);
-                    current = "";
                     found = true;
                     break;
                 case "#":
-                    while((char) file.read() != '\n');
+                    while ((char) file.read() != '\n') ;
 
                     this.row++;
-                    this.column = -1;
+                    this.column = 0;
                     current = "";
                     continue;
                 case "\'":
@@ -179,7 +87,10 @@ public class Lexer {
                         c = (char) file.read();
                     }
 
-                    if (current.matches("'(.?)'")) {
+                    column++;
+                    current = current + c;
+
+                    if (current.matches(REGEX_CHAR)) {
                         nextToken = new Token(TokenCategory.TK_CTECHAR, row, column, getChar(current));
                         current = "";
                         found = true;
@@ -187,126 +98,100 @@ public class Lexer {
 
                     break;
                 case "\"":
-
                     char d = (char) file.read();
                     while (d != '\"') {
                         column++;
                         current = current + d;
                         d = (char) file.read();
                     }
-
+                    column++;
                     current = current + d;
 
-                    System.out.println(current);
-
-                    if (current.matches("\"(.*)\"")) {
+                    if (current.matches(REGEX_STR)) {
                         nextToken = new Token(TokenCategory.TK_CTESTR, row, column, getChar(current));
                         current = "";
                         found = true;
                     }
+
                     break;
             }
-            if (found) {
+
+            if (found)
                 return nextToken;
-            } else {
-                if (current.matches("\\d+")) {
-                    char number = (char) file.read();
 
-                    while (Character.isDigit(number)) {
-                        column++;
-                        current = current + number;
-                        number = (char) file.read();
-                    }
+            if (words.containsKey(current)) {
+                nextToken = new Token(words.get(current), row, column, current);
+                current = "";
+                return nextToken;
+            }
 
-                    if (number != '.') {
-                        rollback = true;
-                        nextToken = new Token(TokenCategory.TK_CTEINT, row, column, current);
-                        current = "";
-                        return nextToken;
-                    }
+            if (current.matches(REGEX_NUMBER)) {
+                char number = (char) file.read();
 
+                while (Character.isDigit(number)) {
+                    column++;
+                    current = current + number;
                     number = (char) file.read();
-                    while (Character.isDigit(number)) {
-                        column++;
-                        current = current + number;
-                        number = (char) file.read();
-                    }
+                }
 
+                if (number != '.') {
                     rollback = true;
-
-                    nextToken = new Token(TokenCategory.TK_CTEREAL, row, column, current);
+                    nextToken = new Token(TokenCategory.TK_CTEINT, row, column, current);
                     current = "";
                     return nextToken;
                 }
+                column++;
+                current = current + number;
 
-                if (current.matches("[a-zA-Z][\\d[a-z][A-Z]]*")) {
-                    if (words.containsKey(current)) {
-                        nextToken = new Token(words.get(current), row, column, current);
-                        current = "";
-                        return nextToken;
-                    } else {
-                        char e = (char) file.read();
-                        while (Character.isLetterOrDigit(e)) {
-                            column++;
-                            current = current + e;
-                            e = (char) file.read();
-                        }
+                number = (char) file.read();
 
-                        rollback = true;
-
-                        if (words.containsKey(current)) {
-                            nextToken = new Token(words.get(current), row, column, current);
-                            current = Character.toString(e);
-                            return nextToken;
-                        }
-
-                        nextToken = new Token(TokenCategory.TK_ID, row, column, current);
-                        current = Character.toString(e);
-                        return nextToken;
-                    }
+                while (Character.isDigit(number)) {
+                    column++;
+                    current = current + number;
+                    number = (char) file.read();
                 }
+
+                rollback = true;
+
+                nextToken = new Token(TokenCategory.TK_CTEREAL, row, column, current);
+                current = "";
+                return nextToken;
+            }
+
+            if (current.matches(REGEX_IDENTIFIER)) {
+                char e = (char) file.read();
+                while (Character.isLetterOrDigit(e)) {
+                    column++;
+                    current = current + e;
+                    e = (char) file.read();
+                }
+
+                rollback = true;
+
+                if (words.containsKey(current)) {
+                    nextToken = new Token(words.get(current), row, column, current);
+                    current = Character.toString(e);
+                    return nextToken;
+                }
+
+                nextToken = new Token(TokenCategory.TK_ID, row, column, current);
+                current = Character.toString(e);
+                return nextToken;
             }
         }
-        return null;
+
+        if (!current.equals("")) {
+            return new Token(TokenCategory.TK_UNKNOW, row, column, current);
+        }
+
+        if (column == 0)
+            column = 1;
+
+        return new Token(TokenCategory.TK_EOF, row, column, current);
     }
 
-
-    public static void main(String[] args) {
-        boolean DEBUG = true;
-        Lexer lexer = new Lexer();
-
-        if (!DEBUG) {
-            if (args.length <= 0) {
-                System.err.println("Uso: hapais <arquivo>.hs --fly <opcional>");
-            }
-            if (args.length > 1) {
-                String opcao = args[1];
-                if (opcao.equals("--fly")) {
-
-                }
-            }
-            String nome = args[0];
-        }
-
-        try {
-            String path = "/Users/dayvsonsales/cpl-bim1/examples/shell.hs";
-            lexer.setFile(new FileInputStream(path));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            while (lexer.getFile().available() > 0) {
-                System.out.println(lexer.nextToken());
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    private String getChar(String c){
-        return c.substring(1, c.length()-1);
+    private String getChar(String c) {
+        return c.substring(1, c.length() - 1);
     }
 
     public FileInputStream getFile() {
@@ -316,4 +201,57 @@ public class Lexer {
     public void setFile(FileInputStream file) {
         this.file = file;
     }
+
+    private void reserve(Word t) {
+        words.put(t.getLexeme(), t.getCategory());
+    }
+
+    private void setReservedWords() {
+        reserve(new Word(TokenCategory.TK_DEFMOD, "defmod"));
+        reserve(new Word(TokenCategory.TK_DEF, "def"));
+        reserve(new Word(TokenCategory.TK_DO, "do"));
+        reserve(new Word(TokenCategory.TK_END, "end"));
+        reserve(new Word(TokenCategory.TK_ENDMOD, "endmod"));
+        reserve(new Word(TokenCategory.TK_UNTIL, "until"));
+        reserve(new Word(TokenCategory.TK_REP, "rep"));
+        reserve(new Word(TokenCategory.TK_WHEN, "when"));
+        reserve(new Word(TokenCategory.TK_RETURN, "return"));
+        reserve(new Word(TokenCategory.TK_OTRWISE, "otherwise"));
+        reserve(new Word(TokenCategory.TK_VOID, "void"));
+        reserve(new Word(TokenCategory.TK_INT, "int"));
+        reserve(new Word(TokenCategory.TK_REAL, "real"));
+        reserve(new Word(TokenCategory.TK_STR, "str"));
+        reserve(new Word(TokenCategory.TK_BOOL, "bool"));
+        reserve(new Word(TokenCategory.TK_CHAR, "char"));
+        reserve(new Word(TokenCategory.TK_READ, "read"));
+        reserve(new Word(TokenCategory.TK_PRINT, "print"));
+        reserve(new Word(TokenCategory.TK_LTVREAD, "lastValueRead"));
+        reserve(new Word(TokenCategory.TK_TRUE, "true"));
+        reserve(new Word(TokenCategory.TK_FALSE, "false"));
+        reserve(new Word(TokenCategory.TK_NIL, "nil"));
+
+
+        reserve(new Word(TokenCategory.TK_SPTOR, ","));
+        reserve(new Word(TokenCategory.TK_DPTS, ":"));
+        reserve(new Word(TokenCategory.TK_PVGL, ";"));
+        reserve(new Word(TokenCategory.TK_ABPAR, "("));
+        reserve(new Word(TokenCategory.TK_FCPAR, ")"));
+        reserve(new Word(TokenCategory.TK_ABCOL, "["));
+        reserve(new Word(TokenCategory.TK_FCCOL, "]"));
+        reserve(new Word(TokenCategory.TK_OPA, "+"));
+        reserve(new Word(TokenCategory.TK_OPA, "-"));
+        reserve(new Word(TokenCategory.TK_OPM, "*"));
+        reserve(new Word(TokenCategory.TK_OPM, "/"));
+        reserve(new Word(TokenCategory.TK_REL2, "!="));
+        reserve(new Word(TokenCategory.TK_REL, ">"));
+        reserve(new Word(TokenCategory.TK_REL, ">="));
+        reserve(new Word(TokenCategory.TK_REL, "<"));
+        reserve(new Word(TokenCategory.TK_REL, "<="));
+        reserve(new Word(TokenCategory.TK_AND, "&&"));
+        reserve(new Word(TokenCategory.TK_OR, "||"));
+        reserve(new Word(TokenCategory.TK_NOT, "~"));
+        reserve(new Word(TokenCategory.TK_CONCAT, "$"));
+
+    }
+
 }

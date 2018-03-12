@@ -1,5 +1,7 @@
 package br.ufal.ic.lexer;
 
+import java.util.Objects;
+
 public class Token {
     private TokenCategory tag;
     private int row;
@@ -53,4 +55,20 @@ public class Token {
         return String.format("[%03d, %03d] (%04d, %10s) {%s}", row, column, tag.ordinal(), tag, value);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Token token = (Token) o;
+        return row == token.row &&
+                column == token.column &&
+                tag == token.tag &&
+                Objects.equals(value, token.value);
+    }
+
+    @Override
+    public int hashCode() {
+
+        return Objects.hash(tag, row, column, value);
+    }
 }

@@ -54,7 +54,9 @@ public enum TokenCategory {
 
     TK_CONCAT,
 
-    TK_EOF
+    TK_EOF,
+
+    TK_UNKNOW
 
 }
 
