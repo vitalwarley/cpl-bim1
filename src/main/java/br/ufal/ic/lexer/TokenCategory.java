@@ -56,7 +56,7 @@ public enum TokenCategory {
 
     TK_EOF,
 
-    TK_UNKNOW
+    TK_UKN
 
 }
 
