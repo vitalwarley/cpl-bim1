@@ -44,7 +44,7 @@ public class Lexer {
 
             if (!rollback) {    /* At first, don't to rollback: we are trying to read a new lexeme */
                 current = current + String.valueOf((char) file.read());
-                /* At first, current is empty, so... */
+                /* Also, at first, current is empty, so... */
                 /* 'current' gets the char that we are gonna read */
                 /* Because we are trying to read a new lexeme, we get the next char ahead. */
                 /* Here we are accumulating the chars we read */
@@ -94,7 +94,7 @@ public class Lexer {
                     found = true;
                     break;
                 case "#":   /* This is a comment in Hapais. */
-                    /* There fore, lets read till the end of line AND till there is something to read */
+                    /* Therefore, lets read till the end of line AND till there is something to read */
                     while ((char) file.read() != '\n' && this.file.available() > 0); /* This second term prevent loops*/
                     this.row++;
                     this.column = 0;
@@ -174,29 +174,35 @@ public class Lexer {
                         column++;
                         current = current + d;      /* Accumulate current */
                         d = (char) file.read();     /* Read next char */
-                        /* If next char d is closing quote AND char */
+                        /* If next char d is closing quote AND previous char is a escape */
                         if (d == '\"' && current.charAt(current.length() - 1) == '\\') {
                             int ind = current.lastIndexOf("\\");
+                            /* Replace escape char with what we want to escape (i.e., a dobule quote) */
                             current = new StringBuilder(current).replace(ind, ind + 1, "\"").toString();
                             d = (char) file.read();
                         }
                     }
 
+                    /* Here we will have a closing quote */
                     if (d != '\n') {
                         current = current + d;
                         column++;
                     }
 
+                    /* Checking if what we accumulated in 'current' matches a cteStr */
                     if (current.matches(REGEX_STR)) {
-                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1), getChar(current));
+                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1),
+                                getChar(current));
                         current = "";
                         found = true;
                     } else {
-                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1), getCharWithoutFirst(current), true, CTESTR_ERR);
+                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1),
+                                getCharWithoutFirst(current), true, CTESTR_ERR);
                         current = "";
                         found = true;
                     }
 
+                    /* End of line... */
                     if (d == '\n') {
                         current = Character.toString(d);
                         rollback = true;
@@ -205,15 +211,18 @@ public class Lexer {
                     break;
             }
 
+            /* Return the token, if founded */
             if (found)
                 return nextToken;
 
+            /* Because a ID can be a reserved word, we here check for it*/
             if (words.containsKey(current)) {
                 nextToken = new Token(words.get(current), row, column - (current.length() - 1), current);
                 current = "";
                 return nextToken;
             }
 
+            /* Try to match a number */
             if (current.matches(REGEX_NUMBER)) {
                 char number = (char) file.read();
 

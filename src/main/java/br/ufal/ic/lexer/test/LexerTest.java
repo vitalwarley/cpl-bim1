@@ -194,7 +194,7 @@ class LexerTest {
 
 
     @Test
-    void charComDoisCaractere(){
+    void charComDoisCaractere() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles(String.join("", path,
@@ -210,6 +210,38 @@ class LexerTest {
                 TokenCategory.TK_CTECHAR, 1, 4, "", true, MessageBR.CTECHAR_ERR));
 
         assertThat(actual, is(expected));
+    }
+
+    @Test
+    void somaPrint() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/somaprint.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(
+                TokenCategory.TK_PRINT, 1, 1, "print"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_ABPAR, 1, 6, "("
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_CTEREAL, 1, 7, "42.42"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_OPA, 1, 12, "-"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_CTEREAL, 1, 13, "0.42"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_FCPAR, 1, 17, ")"
+        ));
+
+        assertThat(actual, is(expected));
+
     }
 
     private static List<Token> readFiles(String name, Lexer lexer) {
