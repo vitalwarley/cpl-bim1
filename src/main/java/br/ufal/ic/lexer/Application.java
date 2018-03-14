@@ -33,16 +33,18 @@ public class Application {
             }
             // String nome = args[0];
         }
-
+        /*
+         * Example codes.
+         * */
         if (DEBUG) {
             System.out.println("Start: hello.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/hello.hs"), new Lexer());
             System.out.println("End: hello.hs");
             System.out.println("Start: fib.hs");
-            readFiles(String.join("",path, "cpl-bim1/examples/fib.hs"), new Lexer());
+            readFiles(String.join("", path, "cpl-bim1/examples/fib.hs"), new Lexer());
             System.out.println("End: fib.hs");
             System.out.println("Start: shell.hs");
-            readFiles(String.join("", path,"cpl-bim1/examples/shell.hs"), new Lexer());
+            readFiles(String.join("", path, "cpl-bim1/examples/shell.hs"), new Lexer());
             System.out.println("End: shell.hs");
             System.out.println("Start: test.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/test.hs"), new Lexer());
@@ -66,10 +68,11 @@ public class Application {
                 tokenList.add(currentToken);
                 System.out.println(currentToken);
             }
-            if(currentToken.getTag() != TokenCategory.TK_EOF){
-                tokenList.add(new Token(TokenCategory.TK_EOF, currentToken.getRow(), currentToken.getColumn()+1, ""));
+            if (currentToken.getTag() != TokenCategory.TK_EOF) {
+                tokenList.add(new Token(TokenCategory.TK_EOF, currentToken.getRow(), currentToken.getColumn() + 1, ""));
             }
-            System.out.println(tokenList.get(tokenList.size()-1));
+            /* Print last token: EOF */
+            System.out.println(tokenList.get(tokenList.size() - 1));
         } catch (IOException e) {
             e.printStackTrace();
         }

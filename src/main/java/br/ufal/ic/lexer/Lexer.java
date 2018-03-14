@@ -9,15 +9,14 @@ import static br.ufal.ic.lexer.i18n.MessageBR.*;
 /* Main class, the lexical analyser. */
 public class Lexer {
 
-    private int row;
-    private int column;
+    private int row;            /* Row being read */
+    private int column;         /* Column that 'current' is at */
+    private String current;     /* Default */
+    private boolean rollback;   /* Will tell us if we have to rollback the reading in some cases */
 
     private FileInputStream file;
 
-    private String current;
-    private boolean rollback;
-
-    /* store reserved words and identifiers */
+    /* Store reserved words and identifiers */
     private Hashtable<String, TokenCategory> words = new Hashtable<>();
 
     private final String REGEX_CHAR = "\'(.?)\'";
@@ -27,10 +26,10 @@ public class Lexer {
 
     public Lexer() {
 
-        this.row = 1;           /* Row being read */
-        this.column = 0;        /* Column that 'current' is at */
-        this.current = "";      /* Default */
-        this.rollback = false;  /* Will tell us if we have to rollback the reading in some cases */
+        this.row = 1;
+        this.column = 0;
+        this.current = "";
+        this.rollback = false;
 
         /* set reserved words */
         setReservedWords();
@@ -87,8 +86,8 @@ public class Lexer {
                         current = Character.toString(t);
                         /**
                          *   Here we HAVE to rollback... why?
-                         *   You see, in line 70 we read the next char to see if it was other '='.
-                         *   As it is not, we have to stop there to in line 44 do what we need to do.
+                         *   You see, in line 72 we read the next char to see if it was other '='.
+                         *   As it is not, we have to stop there to in line 46 do what we need to do.
                          */
                         rollback = true;
                     }
@@ -96,20 +95,18 @@ public class Lexer {
                     break;
                 case "#":   /* This is a comment in Hapais. */
                     /* There fore, lets read till the end of line AND till there is something to read */
-                    while ((char) file.read() != '\n' && this.file.available() > 0)
-                        ; /* This second term prevent loops*/
-
+                    while ((char) file.read() != '\n' && this.file.available() > 0); /* This second term prevent loops*/
                     this.row++;
                     this.column = 0;
                     current = "";
                     continue;
                 case "\'":  /* This simple quote can define a new char or be in a ctStr */
-                    char c = (char) file.read(); /* Read next lexeme */
+                    char c = (char) file.read(); /* Read next char */
 
                     /*
-                     *  In case c is a escape AND there is something to read, we check next lexeme.
-                     *  It can be: \n, \t, \r, \', \" (others??)
-                     *  So we add it to current and read next lexeme.
+                     *  In case c is a escape...
+                     *  It can be: \n, \t, \r, \', \" etc., but in Hapais we have only \', \" and \\
+                     *  So we add it to 'current' and read next lexeme.
                      */
                     if (c == '\\') {
                         char aux = c;
@@ -125,50 +122,59 @@ public class Lexer {
                         } else {
                             current = current + aux;
                         }
-                    } else {
-
+                    } else { /* c is not a escape */
                         /*
-                         * While next char isn't a closing quote AND there is something to read...
-                         * Column++ to read the next lexeme.
-                         * current is accumulating new chars (lexemes)
-                         * next lexeme is casted to the actual c
+                         * If there is something to read and c is not a simple quote...
+                         * Here we check if it is not a empty char.
+                         * If so, accumulate.
                          */
-                        if(this.file.available() > 0) {
-                            if (c != '\'') {
+                        if (this.file.available() > 0 && (c != '\'')) {
                                 column++;
                                 current = current + c;
-                            }
                         }
                     }
 
+                    /* Read next char if there is something to read */
                     if (this.file.available() > 0) {
                         c = (char) file.read();
                     }
 
+                    /* Close char with a simple quote */
                     if (c == '\'') {
                         column++;
                         current = current + c;
                     }
 
+                    /* Try to match what we currently have in 'current' */
                     if (current.matches(REGEX_CHAR)) {
-                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1), getChar(current));
+                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1),
+                                getChar(current));
                         current = "";
                         found = true;
                     } else {
-                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1), getCharWithoutFirst(current), true, CTECHAR_ERR);
+                        /* If we didn't get something like 'a',
+                         * we set error true and take the first char we encounter: 'a<something> */
+                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1),
+                                getCharWithoutFirst(current), true, CTECHAR_ERR);
                         current = Character.toString(c);
                         found = true;
                         rollback = true;
                     }
 
                     break;
-                case "\"":
-                    char d = (char) file.read();
+                case "\"":  /* This double quote can define a new ctStr */
+                    char d = (char) file.read(); /* Read next char */
+                    /**
+                    * While d IS NOT a double quote (that is, we haven't reached the string's end),
+                     * AND a new line char
+                     * AND there is something to read
+                     * ...
+                    * */
                     while (d != '\"' && d != '\n' && this.file.available() > 0) {
                         column++;
-                        current = current + d;
-                        d = (char) file.read();
-
+                        current = current + d;      /* Accumulate current */
+                        d = (char) file.read();     /* Read next char */
+                        /* If next char d is closing quote AND char */
                         if (d == '\"' && current.charAt(current.length() - 1) == '\\') {
                             int ind = current.lastIndexOf("\\");
                             current = new StringBuilder(current).replace(ind, ind + 1, "\"").toString();
@@ -264,7 +270,7 @@ public class Lexer {
         }
 
         if (!current.equals("")) {
-            return new Token(TokenCategory.TK_UNKNOW, row, column - (current.length() - 1), current);
+            return new Token(TokenCategory.TK_UKN, row, column - (current.length() - 1), current);
         }
 
         if (column == 0)
