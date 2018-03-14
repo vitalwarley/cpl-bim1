@@ -18,8 +18,8 @@ public class Application {
         /* List of tokens that have been identified */
         tokenList = new ArrayList<>();
         /* Path to language examples used to test the scanner */
-        String path = "/Users/dayvsonsales/cpl-bim1/examples/";
-        //String path = "/home/lativ/IdeaProjects/cpl-bim1/examples/";
+        //String path = "/Users/dayvsonsales/";
+        String path = "/home/lativ/IdeaProjects/";
 
         if (!DEBUG) {
             if (args.length <= 0) {
@@ -36,16 +36,16 @@ public class Application {
 
         if (DEBUG) {
             System.out.println("Start: hello.hs");
-            readFiles("/Users/dayvsonsales/cpl-bim1/examples/hello.hs", new Lexer());
+            readFiles(String.join("", path, "cpl-bim1/examples/hello.hs"), new Lexer());
             System.out.println("End: hello.hs");
             System.out.println("Start: fib.hs");
-            readFiles("/Users/dayvsonsales/cpl-bim1/examples/fib.hs", new Lexer());
+            readFiles(String.join("",path, "cpl-bim1/examples/fib.hs"), new Lexer());
             System.out.println("End: fib.hs");
             System.out.println("Start: shell.hs");
-            readFiles("/Users/dayvsonsales/cpl-bim1/examples/shell.hs", new Lexer());
+            readFiles(String.join("", path,"cpl-bim1/examples/shell.hs"), new Lexer());
             System.out.println("End: shell.hs");
             System.out.println("Start: test.hs");
-            readFiles("/Users/dayvsonsales/cpl-bim1/examples/test.hs", new Lexer());
+            readFiles(String.join("", path, "cpl-bim1/examples/test.hs"), new Lexer());
             System.out.println("End: test.hs");
         }
     }
@@ -59,7 +59,7 @@ public class Application {
         }
 
         try {
-            /* Take next token while there is data on file to be read */
+            /* Take next token while there is data on the file to be read */
             Token currentToken = null;
             while (lexer.getFile().available() > 0) {
                 currentToken = lexer.nextToken();
