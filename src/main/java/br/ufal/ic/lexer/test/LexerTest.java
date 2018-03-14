@@ -17,8 +17,8 @@ import java.util.List;
 
 class LexerTest {
     /* TODO: colocar path num application properties? */
-    //String path = "/Users/dayvsonsales/";
-    String path = "/home/lativ/IdeaProjects/";
+    String path = "/Users/dayvsonsales/";
+   // String path = "/home/lativ/IdeaProjects/";
 
     /*
      * @test Verificando se consegue trabalhar com constante REAL
@@ -111,6 +111,25 @@ class LexerTest {
         assertThat(actual, is(expected));
     }
 
+    @Test
+    void printComOperacao() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path, "/cpl-bim1/examples/test/printOp.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(TokenCategory.TK_PRINT, 1, 1, "print"));
+        expected.add(new Token(TokenCategory.TK_ABPAR, 1, 6, "("));
+        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 7, "42.42"));
+        expected.add(new Token(TokenCategory.TK_OPA, 1, 12, "-"));
+        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 13, "0.42"));
+        expected.add(new Token(TokenCategory.TK_FCPAR, 1, 17, ")"));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
     /*
      * @test Verificando se consegue trabalhar com arquivos sem nnehum token valido
      * @expected Uma lista com um único token TK_UNKNOW
@@ -191,7 +210,6 @@ class LexerTest {
 
         assertThat(actual, is(expected));
     }
-
 
     @Test
     void charComDoisCaractere(){
