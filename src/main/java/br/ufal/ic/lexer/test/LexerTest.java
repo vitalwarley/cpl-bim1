@@ -18,7 +18,7 @@ import java.util.List;
 class LexerTest {
     /* TODO: colocar path num application properties? */
     String path = "/Users/dayvsonsales/";
-   // String path = "/home/lativ/IdeaProjects/";
+    // String path = "/home/lativ/IdeaProjects/";
 
     /*
      * @test Verificando se consegue trabalhar com constante REAL
@@ -38,6 +38,7 @@ class LexerTest {
         expected.add(new Token(TokenCategory.TK_CTEINT, 1, 7, "30"));
         expected.add(new Token(TokenCategory.TK_OPA, 1, 10, "-"));
         expected.add(new Token(TokenCategory.TK_CTEINT, 1, 11, "40"));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
 
         assertThat(actual, is(expected));
     }
@@ -84,6 +85,7 @@ class LexerTest {
         expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 11, "30.0"));
         expected.add(new Token(TokenCategory.TK_OPA, 1, 16, "-"));
         expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 17, "40.0"));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
 
         assertThat(actual, is(expected));
     }
@@ -207,12 +209,13 @@ class LexerTest {
         expected.add(new Token(TokenCategory.TK_ID, 1, 3, "b"));
         expected.add(new Token(TokenCategory.TK_ID, 1, 5, "c"));
         expected.add(new Token(TokenCategory.TK_CTESTR, 1, 7, "", true, MessageBR.CTESTR_ERR));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
 
         assertThat(actual, is(expected));
     }
 
     @Test
-    void charComDoisCaractere(){
+    void charComDoisCaractere() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles(String.join("", path,
@@ -226,8 +229,41 @@ class LexerTest {
                 TokenCategory.TK_ID, 1, 3, "a"));
         expected.add(new Token(
                 TokenCategory.TK_CTECHAR, 1, 4, "", true, MessageBR.CTECHAR_ERR));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
 
         assertThat(actual, is(expected));
+    }
+
+    @Test
+    void somaPrint() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/somaprint.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(
+                TokenCategory.TK_PRINT, 1, 1, "print"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_ABPAR, 1, 6, "("
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_CTEREAL, 1, 7, "42.42"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_OPA, 1, 12, "-"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_CTEREAL, 1, 13, "0.42"
+        ));
+        expected.add(new Token(
+                TokenCategory.TK_FCPAR, 1, 17, ")"
+        ));
+
+        assertThat(actual, is(expected));
+
     }
 
     private static List<Token> readFiles(String name, Lexer lexer) {
@@ -242,7 +278,7 @@ class LexerTest {
         }
 
         try {
-            while (lexer.getFile().available() > 0) {
+            while (lexer.getFile().available() > 0 || lexer.isRollback()) {
                 Token currentToken = lexer.nextToken();
                 tokenList.add(currentToken);
             }

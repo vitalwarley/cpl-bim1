@@ -18,8 +18,8 @@ public class Application {
         /* List of tokens that have been identified */
         tokenList = new ArrayList<>();
         /* Path to language examples used to test the scanner */
-        //String path = "/Users/dayvsonsales/";
-        String path = "/home/lativ/IdeaProjects/";
+        String path = "/Users/dayvsonsales/";
+        //String path = "/home/lativ/IdeaProjects/";
 
         if (!DEBUG) {
             if (args.length <= 0) {
@@ -63,16 +63,17 @@ public class Application {
         try {
             /* Take next token while there is data on the file to be read */
             Token currentToken = null;
-            while (lexer.getFile().available() > 0) {
+            while (lexer.getFile().available() > 0 || lexer.isRollback()) {
                 currentToken = lexer.nextToken();
                 tokenList.add(currentToken);
                 System.out.println(currentToken);
             }
             if (currentToken.getTag() != TokenCategory.TK_EOF) {
                 tokenList.add(new Token(TokenCategory.TK_EOF, currentToken.getRow(), currentToken.getColumn() + 1, ""));
+                System.out.println(tokenList.get(tokenList.size() - 1));
             }
             /* Print last token: EOF */
-            System.out.println(tokenList.get(tokenList.size() - 1));
+
         } catch (IOException e) {
             e.printStackTrace();
         }
