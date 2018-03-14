@@ -111,29 +111,54 @@ public class Lexer {
                      *  It can be: \n, \t, \r, \', \" (others??)
                      *  So we add it to current and read next lexeme.
                      */
-                    if (c == '\\' && this.file.available() > 0) {
-                        // check the cases
+                    if (c == '\\') {
+                        char aux = c;
+                        column++;
+                        if (this.file.available() > 0) {
+                            column++;
+                            c = (char) file.read();
+                            if (c == '\"' || c == '\'' || c == '\\') {
+                                current = current + c;
+                            } else {
+                                current = current + aux;
+                            }
+                        } else {
+                            current = current + aux;
+                        }
                     } else {
+
                         /*
                          * While next char isn't a closing quote AND there is something to read...
                          * Column++ to read the next lexeme.
                          * current is accumulating new chars (lexemes)
                          * next lexeme is casted to the actual c
                          */
-                        while (c != '\'' && this.file.available() > 0) {
-                            column++;
-                            current = current + c;
-                            c = (char) file.read();
+                        if(this.file.available() > 0) {
+                            if (c != '\'') {
+                                column++;
+                                current = current + c;
+                            }
                         }
                     }
 
-                    column++;
-                    current = current + c;
+                    if (this.file.available() > 0) {
+                        c = (char) file.read();
+                    }
+
+                    if (c == '\'') {
+                        column++;
+                        current = current + c;
+                    }
 
                     if (current.matches(REGEX_CHAR)) {
                         nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1), getChar(current));
                         current = "";
                         found = true;
+                    } else {
+                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1), getCharWithoutFirst(current), true, CTECHAR_ERR);
+                        current = Character.toString(c);
+                        found = true;
+                        rollback = true;
                     }
 
                     break;

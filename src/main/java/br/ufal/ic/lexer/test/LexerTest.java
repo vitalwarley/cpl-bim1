@@ -189,6 +189,22 @@ class LexerTest {
         assertThat(actual, is(expected));
     }
 
+
+    @Test
+    void charComDoisCaractere(){
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/chardoiscarac.hs", lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 1, "a", true, MessageBR.CTECHAR_ERR));
+        expected.add(new Token(TokenCategory.TK_ID, 1, 3, "a"));
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 4, "", true, MessageBR.CTECHAR_ERR));
+
+        assertThat(actual, is(expected));
+    }
+
     private static List<Token> readFiles(String name, Lexer lexer) {
 
         List<Token> tokenList = new ArrayList<>();
