@@ -205,29 +205,9 @@ class LexerTest {
         expected.add(new Token(
                 TokenCategory.TK_CTECHAR, 1, 1, "a", true, MessageBR.CTECHAR_ERR));
         expected.add(new Token(
-                TokenCategory.TK_ID, 1, 3, "a")); /* Read second 'a' normally as an id */
+                TokenCategory.TK_ID, 1, 3, "a"));
         expected.add(new Token(
                 TokenCategory.TK_CTECHAR, 1, 4, "", true, MessageBR.CTECHAR_ERR));
-
-        assertThat(actual, is(expected));
-    }
-
-    @Test
-    void testUnaryOp() {
-        /* Check some service so that we don't have to instantiate every time */
-        Lexer lexer = new Lexer();
-
-        List<Token> actual = readFiles(String.join("", path,
-                "/cpl-bim1/examples/test/unaryOp.hs"), lexer);
-
-        List<Token> expected = new ArrayList<>();
-
-        expected.add(new Token(
-                TokenCategory.TK_OPU, 1, 1, "-"
-        ));
-        expected.add(new Token(
-                TokenCategory.TK_CTEREAL, 1, 2, "10.5"
-        ));
 
         assertThat(actual, is(expected));
     }
