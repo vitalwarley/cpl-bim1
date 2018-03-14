@@ -29,11 +29,11 @@ class LexerTest {
 
         List<Token> expected = new ArrayList<>();
 
-        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 2, "10"));
-        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 5, "20"));
-        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 8, "30"));
+        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 1, "10"));
+        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 4, "20"));
+        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 7, "30"));
         expected.add(new Token(TokenCategory.TK_OPA, 1, 10, "-"));
-        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 12, "40"));
+        expected.add(new Token(TokenCategory.TK_CTEINT, 1, 11, "40"));
 
         assertThat(actual, is(expected));
     }
@@ -52,10 +52,10 @@ class LexerTest {
 
         List<Token> expected = new ArrayList<>();
 
-        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 4, "10"));
-        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 9, "20"));
-        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 13, "30"));
-        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 18, "-40"));
+        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 1, "10"));
+        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 6, "20"));
+        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 10, "30"));
+        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 14, "-40"));
         expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
 
         assertThat(actual, is(expected));
@@ -75,11 +75,11 @@ class LexerTest {
 
         List<Token> expected = new ArrayList<>();
 
-        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 4, "10.0"));
-        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 9, "20.0"));
-        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 14, "30.0"));
+        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 1, "10.0"));
+        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 6, "20.0"));
+        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 11, "30.0"));
         expected.add(new Token(TokenCategory.TK_OPA, 1, 16, "-"));
-        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 20, "40.0"));
+        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 17, "40.0"));
 
         assertThat(actual, is(expected));
     }
@@ -97,11 +97,11 @@ class LexerTest {
 
         List<Token> expected = new ArrayList<>();
 
-        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 3, "a"));
-        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 7, "b"));
-        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 11, "b"));
-        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 15, "e"));
-        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 19, "1"));
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 1, "a"));
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 5, "b"));
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 9, "b"));
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 13, "e"));
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 17, "1"));
         expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
 
         assertThat(actual, is(expected));
@@ -120,7 +120,7 @@ class LexerTest {
 
         List<Token> expected = new ArrayList<>();
 
-        expected.add(new Token(TokenCategory.TK_UNKNOW, 1, 11, "\\n !!!!!Î©\n"));
+        expected.add(new Token(TokenCategory.TK_UNKNOW, 1, 1, "\\n !!!!!Î©\n"));
 
         assertThat(actual, is(expected));
     }

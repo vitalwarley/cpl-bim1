@@ -74,7 +74,7 @@ public class Lexer {
                          *  row, column are straightforward
                          *  current is the lexeme (we really don't need it, but whatever)
                         **/
-                        nextToken = new Token(TokenCategory.TK_REL2, row, column, current);
+                        nextToken = new Token(TokenCategory.TK_REL2, row, column - (current.length()-1), current);
                         current = "";   /* After read, get back to default */
                     } else {
                         /**
@@ -128,7 +128,7 @@ public class Lexer {
                     current = current + c;
 
                     if (current.matches(REGEX_CHAR)) {
-                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column, getChar(current));
+                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length()-1), getChar(current));
                         current = "";
                         found = true;
                     }
@@ -145,7 +145,7 @@ public class Lexer {
                     current = current + d;
 
                     if (current.matches(REGEX_STR)) {
-                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column, getChar(current));
+                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length()-1), getChar(current));
                         current = "";
                         found = true;
                     }
@@ -157,7 +157,7 @@ public class Lexer {
                 return nextToken;
 
             if (words.containsKey(current)) {
-                nextToken = new Token(words.get(current), row, column, current);
+                nextToken = new Token(words.get(current), row, column - (current.length()-1), current);
                 current = "";
                 return nextToken;
             }
@@ -173,7 +173,7 @@ public class Lexer {
 
                 if (number != '.') {
                     rollback = true;
-                    nextToken = new Token(TokenCategory.TK_CTEINT, row, column, current);
+                    nextToken = new Token(TokenCategory.TK_CTEINT, row, column - (current.length()-1), current);
                     current = "";
                     return nextToken;
                 }
@@ -190,7 +190,7 @@ public class Lexer {
 
                 rollback = true;
 
-                nextToken = new Token(TokenCategory.TK_CTEREAL, row, column, current);
+                nextToken = new Token(TokenCategory.TK_CTEREAL, row, column - (current.length()-1), current);
                 current = "";
                 return nextToken;
             }
@@ -206,19 +206,19 @@ public class Lexer {
                 rollback = true;
 
                 if (words.containsKey(current)) {
-                    nextToken = new Token(words.get(current), row, column, current);
+                    nextToken = new Token(words.get(current), row, column - (current.length()-1), current);
                     current = Character.toString(e);
                     return nextToken;
                 }
 
-                nextToken = new Token(TokenCategory.TK_ID, row, column, current);
+                nextToken = new Token(TokenCategory.TK_ID, row, column - (current.length()-1), current);
                 current = Character.toString(e);
                 return nextToken;
             }
         }
 
         if (!current.equals("")) {
-            return new Token(TokenCategory.TK_UNKNOW, row, column, current);
+            return new Token(TokenCategory.TK_UNKNOW, row, column - (current.length()-1), current);
         }
 
         if (column == 0)
