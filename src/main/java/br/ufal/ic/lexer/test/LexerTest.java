@@ -23,7 +23,7 @@ class LexerTest {
      * @passed
      * */
     @Test
-    void cteInt(){
+    void cteInt() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/cteInt.hs", lexer);
@@ -45,7 +45,7 @@ class LexerTest {
      * @passed
      * */
     @Test
-    void cteStr(){
+    void cteStr() {
 
         Lexer lexer = new Lexer();
 
@@ -69,7 +69,7 @@ class LexerTest {
      * @passed
      * */
     @Test
-    void cteReal(){
+    void cteReal() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/cteReal.hs", lexer);
@@ -91,7 +91,7 @@ class LexerTest {
      * @passed
      * */
     @Test
-    void cteChar(){
+    void cteChar() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/cteChar.hs", lexer);
@@ -109,12 +109,12 @@ class LexerTest {
     }
 
     /*
-    * @test Verificando se consegue trabalhar com arquivos sem nnehum token valido
-    * @expected Uma lista com um único token TK_UNKNOW
-    * @passed
-    * */
+     * @test Verificando se consegue trabalhar com arquivos sem nnehum token valido
+     * @expected Uma lista com um único token TK_UNKNOW
+     * @passed
+     * */
     @Test
-    void nenhumTokenValido(){
+    void nenhumTokenValido() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/novalid.hs", lexer);
@@ -132,7 +132,7 @@ class LexerTest {
      * @passed
      * */
     @Test
-    void tudoEspaco(){
+    void tudoEspaco() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/whitespace.hs", lexer);
@@ -145,7 +145,7 @@ class LexerTest {
     }
 
     @Test
-    void strComQuebradeLinhaErro(){
+    void strComQuebradeLinhaErro() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/strquebra.hs", lexer);
@@ -153,14 +153,14 @@ class LexerTest {
         List<Token> expected = new ArrayList<>();
 
         expected.add(new Token(TokenCategory.TK_CTESTR, 1, 1, "mari", true, MessageBR.CTESTR_ERR));
-        expected.add(new Token(TokenCategory.TK_CTESTR, 2, 1, ""    ));
+        expected.add(new Token(TokenCategory.TK_CTESTR, 2, 1, ""));
         expected.add(new Token(TokenCategory.TK_EOF, 3, 1, ""));
 
         assertThat(actual, is(expected));
     }
 
     @Test
-    void strComEscapeAspasDuplas(){
+    void strComEscapeAspasDuplas() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/strescape.hs", lexer);
@@ -173,7 +173,23 @@ class LexerTest {
         assertThat(actual, is(expected));
     }
 
-    private static List<Token> readFiles(String name, Lexer lexer){
+    @Test
+    void strNaUltimaPosicaoComErro() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/strultimo.hs", lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(TokenCategory.TK_ID, 1, 1, "a"));
+        expected.add(new Token(TokenCategory.TK_ID, 1, 3, "b"));
+        expected.add(new Token(TokenCategory.TK_ID, 1, 5, "c"));
+        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 7, "", true, MessageBR.CTESTR_ERR));
+
+        assertThat(actual, is(expected));
+    }
+
+    private static List<Token> readFiles(String name, Lexer lexer) {
 
         List<Token> tokenList = new ArrayList<>();
 

@@ -106,7 +106,7 @@ public class Lexer {
                 case "\'":  /* This simple quote can define a new char or be in a ctStr */
                     char c = (char) file.read(); /* Read next lexeme */
 
-                    /**
+                    /*
                      *  In case c is a escape AND there is something to read, we check next lexeme.
                      *  It can be: \n, \t, \r, \', \" (others??)
                      *  So we add it to current and read next lexeme.
@@ -114,7 +114,7 @@ public class Lexer {
                     if (c == '\\' && this.file.available() > 0) {
                         // check the cases
                     } else {
-                        /**
+                        /*
                          * While next char isn't a closing quote AND there is something to read...
                          * Column++ to read the next lexeme.
                          * current is accumulating new chars (lexemes)
