@@ -24,6 +24,7 @@ public class Lexer {
     private final String REGEX_STR = "\"[\\\\d a-zA-Z_\\.,:;!+-\\?<>=\\(\\)\\[\\]{}\\'\"@%\\^\\\\]*\"";
     private final String REGEX_IDENTIFIER = "[a-zA-Z][\\d[a-z][A-Z]]*";
     private final String REGEX_NUMBER = "\\d+";
+    private final String REGEX_REAL = "\\d+\\.\\d+";
 
     public Lexer() {
 
@@ -71,31 +72,17 @@ public class Lexer {
                     /* Read again */
                     char t = (char) file.read();    /* We cast to char because file.read() returns the data in bytes. */
                     if (t == '=') {     /* If next lexeme is '=', we create a new Token */
-                        /**
-                         *  TK_REL2 is the TokenCategory for '=='
-                         *  row, column are straightforward
-                         *  current is the lexeme (we really don't need it, but whatever)
-                         **/
                         nextToken = new Token(TokenCategory.TK_REL2, row, column - (current.length() - 1), current);
-                        current = "";   /* After read, get back to default */
+                        current = "";
                     } else {
-                        /**
-                         * Because next char after '=' is not other '=', the '=' must be a assign operator.
-                         * TK_ATR is the TokenCategory for '='
-                         */
                         nextToken = new Token(TokenCategory.TK_ATR, row, column, current);
                         current = Character.toString(t);
-                        /**
-                         *   Here we HAVE to rollback... why?
-                         *   You see, in line 70 we read the next char to see if it was other '='.
-                         *   As it is not, we have to stop there to in line 44 do what we need to do.
-                         */
                         rollback = true;
                     }
                     found = true;
                     break;
                 case "#":   /* This is a comment in Hapais. */
-                    /* There fore, lets read till the end of line AND till there is something to read */
+                    /* Therefore, lets read till the end of line AND till there is something to read */
                     while ((char) file.read() != '\n' && this.file.available() > 0)
                         ; /* This second term prevent loops*/
 
@@ -103,14 +90,16 @@ public class Lexer {
                     this.column = 0;
                     current = "";
                     continue;
-                case "\'":  /* This simple quote can define a new char or be in a ctStr */
-                    char c = (char) file.read(); /* Read next lexeme */
+                case "\'":
+                    char c = (char) file.read();
 
-                    /*
-                     *  In case c is a escape AND there is something to read, we check next lexeme.
-                     *  It can be: \n, \t, \r, \', \" (others??)
-                     *  So we add it to current and read next lexeme.
-                     */
+                    if(c == '\n'){
+                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1), getCharWithoutFirst(current), true, CTECHAR_ERR);
+                        current = Character.toString(c);
+                        rollback = true;
+                        return  nextToken;
+                    }
+
                     if (c == '\\') {
                         char aux = c;
                         column++;
@@ -133,7 +122,7 @@ public class Lexer {
                          * current is accumulating new chars (lexemes)
                          * next lexeme is casted to the actual c
                          */
-                        if(this.file.available() > 0) {
+                        if (this.file.available() > 0) {
                             if (c != '\'') {
                                 column++;
                                 current = current + c;
@@ -183,13 +172,12 @@ public class Lexer {
 
                     if (current.matches(REGEX_STR)) {
                         nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1), getChar(current));
-                        current = "";
-                        found = true;
                     } else {
                         nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1), getCharWithoutFirst(current), true, CTESTR_ERR);
-                        current = "";
-                        found = true;
                     }
+
+                    current = "";
+                    found = true;
 
                     if (d == '\n') {
                         current = Character.toString(d);
@@ -220,9 +208,10 @@ public class Lexer {
                 if (number != '.') {
                     rollback = true;
                     nextToken = new Token(TokenCategory.TK_CTEINT, row, column - (current.length() - 1), current);
-                    current = "";
+                    current = Character.toString(number);
                     return nextToken;
                 }
+
                 column++;
                 current = current + number;
 
@@ -236,8 +225,14 @@ public class Lexer {
 
                 rollback = true;
 
-                nextToken = new Token(TokenCategory.TK_CTEREAL, row, column - (current.length() - 1), current);
-                current = "";
+                if (current.matches(REGEX_REAL)) {
+                    nextToken = new Token(TokenCategory.TK_CTEREAL, row, column - (current.length() - 1), current);
+                } else {
+                    nextToken = new Token(TokenCategory.TK_CTEREAL, row, column - (current.length() - 1), current, true, CTEREAL_ERR);
+                }
+
+                current = Character.toString(number);
+
                 return nextToken;
             }
 
