@@ -45,6 +45,7 @@ public enum TokenCategory {
     TK_NIL,
     TK_OPA,
     TK_OPM,
+    TK_OPU,
     TK_ATR,
     TK_REL,
     TK_REL2,
