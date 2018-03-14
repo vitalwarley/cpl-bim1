@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
 
+import static br.ufal.ic.lexer.i18n.MessageBR.*;
+
 /* Main class, the lexical analyser. */
 public class Lexer {
 
@@ -19,7 +21,7 @@ public class Lexer {
     private Hashtable<String, TokenCategory> words = new Hashtable<>();
 
     private final String REGEX_CHAR = "\'(.?)\'";
-    private final String REGEX_STR = "[\\\\d a-zA-Z_\\.,:;!+-\\?<>=\\(\\)\\[\\]{}\\'\"@%\\^\\\\]*";
+    private final String REGEX_STR = "\"[\\\\d a-zA-Z_\\.,:;!+-\\?<>=\\(\\)\\[\\]{}\\'\"@%\\^\\\\]*\"";
     private final String REGEX_IDENTIFIER = "[a-zA-Z][\\d[a-z][A-Z]]*";
     private final String REGEX_NUMBER = "\\d+";
 
@@ -73,8 +75,8 @@ public class Lexer {
                          *  TK_REL2 is the TokenCategory for '=='
                          *  row, column are straightforward
                          *  current is the lexeme (we really don't need it, but whatever)
-                        **/
-                        nextToken = new Token(TokenCategory.TK_REL2, row, column - (current.length()-1), current);
+                         **/
+                        nextToken = new Token(TokenCategory.TK_REL2, row, column - (current.length() - 1), current);
                         current = "";   /* After read, get back to default */
                     } else {
                         /**
@@ -94,7 +96,8 @@ public class Lexer {
                     break;
                 case "#":   /* This is a comment in Hapais. */
                     /* There fore, lets read till the end of line AND till there is something to read */
-                    while ((char) file.read() != '\n' && this.file.available() > 0); /* This second term prevent loops*/
+                    while ((char) file.read() != '\n' && this.file.available() > 0)
+                        ; /* This second term prevent loops*/
 
                     this.row++;
                     this.column = 0;
@@ -128,7 +131,7 @@ public class Lexer {
                     current = current + c;
 
                     if (current.matches(REGEX_CHAR)) {
-                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length()-1), getChar(current));
+                        nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1), getChar(current));
                         current = "";
                         found = true;
                     }
@@ -136,18 +139,36 @@ public class Lexer {
                     break;
                 case "\"":
                     char d = (char) file.read();
-                    while (d != '\"' && this.file.available() > 0) {
+                    while (d != '\"' && d != '\n' && this.file.available() > 0) {
                         column++;
                         current = current + d;
                         d = (char) file.read();
+
+                        if (d == '\"' && current.charAt(current.length() - 1) == '\\') {
+                            int ind = current.lastIndexOf("\\");
+                            current = new StringBuilder(current).replace(ind, ind + 1, "\"").toString();
+                            d = (char) file.read();
+                        }
                     }
-                    column++;
-                    current = current + d;
+
+                    if (d != '\n') {
+                        current = current + d;
+                        column++;
+                    }
 
                     if (current.matches(REGEX_STR)) {
-                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length()-1), getChar(current));
+                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1), getChar(current));
                         current = "";
                         found = true;
+                    } else {
+                        nextToken = new Token(TokenCategory.TK_CTESTR, row, column - (current.length() - 1), getCharWithoutFirst(current), true, CTESTR_ERR);
+                        current = "";
+                        found = true;
+                    }
+
+                    if (d == '\n') {
+                        current = Character.toString(d);
+                        rollback = true;
                     }
 
                     break;
@@ -157,7 +178,7 @@ public class Lexer {
                 return nextToken;
 
             if (words.containsKey(current)) {
-                nextToken = new Token(words.get(current), row, column - (current.length()-1), current);
+                nextToken = new Token(words.get(current), row, column - (current.length() - 1), current);
                 current = "";
                 return nextToken;
             }
@@ -173,7 +194,7 @@ public class Lexer {
 
                 if (number != '.') {
                     rollback = true;
-                    nextToken = new Token(TokenCategory.TK_CTEINT, row, column - (current.length()-1), current);
+                    nextToken = new Token(TokenCategory.TK_CTEINT, row, column - (current.length() - 1), current);
                     current = "";
                     return nextToken;
                 }
@@ -190,7 +211,7 @@ public class Lexer {
 
                 rollback = true;
 
-                nextToken = new Token(TokenCategory.TK_CTEREAL, row, column - (current.length()-1), current);
+                nextToken = new Token(TokenCategory.TK_CTEREAL, row, column - (current.length() - 1), current);
                 current = "";
                 return nextToken;
             }
@@ -206,19 +227,19 @@ public class Lexer {
                 rollback = true;
 
                 if (words.containsKey(current)) {
-                    nextToken = new Token(words.get(current), row, column - (current.length()-1), current);
+                    nextToken = new Token(words.get(current), row, column - (current.length() - 1), current);
                     current = Character.toString(e);
                     return nextToken;
                 }
 
-                nextToken = new Token(TokenCategory.TK_ID, row, column - (current.length()-1), current);
+                nextToken = new Token(TokenCategory.TK_ID, row, column - (current.length() - 1), current);
                 current = Character.toString(e);
                 return nextToken;
             }
         }
 
         if (!current.equals("")) {
-            return new Token(TokenCategory.TK_UNKNOW, row, column - (current.length()-1), current);
+            return new Token(TokenCategory.TK_UNKNOW, row, column - (current.length() - 1), current);
         }
 
         if (column == 0)
@@ -229,6 +250,10 @@ public class Lexer {
 
     private String getChar(String c) {
         return c.substring(1, c.length() - 1);
+    }
+
+    private String getCharWithoutFirst(String c) {
+        return c.substring(1, c.length());
     }
 
     public FileInputStream getFile() {

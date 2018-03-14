@@ -3,6 +3,7 @@ package br.ufal.ic.lexer.test;
 import br.ufal.ic.lexer.Lexer;
 import br.ufal.ic.lexer.Token;
 import br.ufal.ic.lexer.TokenCategory;
+import br.ufal.ic.lexer.i18n.MessageBR;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -138,6 +139,35 @@ class LexerTest {
 
         List<Token> expected = new ArrayList<>();
 
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void strComQuebradeLinhaErro(){
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/strquebra.hs", lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 1, "mari", true, MessageBR.CTESTR_ERR));
+        expected.add(new Token(TokenCategory.TK_CTESTR, 2, 1, ""    ));
+        expected.add(new Token(TokenCategory.TK_EOF, 3, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void strComEscapeAspasDuplas(){
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles("/Users/dayvsonsales/cpl-bim1/examples/test/strescape.hs", lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(TokenCategory.TK_CTESTR, 1, 1, "\"mari\""));
         expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
 
         assertThat(actual, is(expected));

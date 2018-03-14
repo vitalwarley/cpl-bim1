@@ -3,10 +3,13 @@ package br.ufal.ic.lexer;
 import java.util.Objects;
 
 public class Token {
+
     private TokenCategory tag;
     private int row;
     private int column;
     private String value;
+    private boolean error;
+    private String msg;
 
     public Token(TokenCategory tag) {
         this.tag = tag;
@@ -17,6 +20,17 @@ public class Token {
         this.row = row;
         this.column = column;
         this.value = value;
+        this.error = false;
+        this.msg = "";
+    }
+
+    public Token(TokenCategory tag, int row, int column, String value, boolean error, String msg) {
+        this.tag = tag;
+        this.row = row;
+        this.column = column;
+        this.value = value;
+        this.error = error;
+        this.msg = msg;
     }
 
     public TokenCategory getTag() {
@@ -51,7 +65,23 @@ public class Token {
         this.value = value;
     }
 
-    public String toString(){
+    public boolean isError() {
+        return error;
+    }
+
+    public void setError(boolean error) {
+        this.error = error;
+    }
+
+    public String getMsg() {
+        return msg;
+    }
+
+    public void setMsg(String msg) {
+        this.msg = msg;
+    }
+
+    public String toString() {
         return String.format("[%03d, %03d] (%04d, %10s) {%s}", row, column, tag.ordinal(), tag, value);
     }
 
