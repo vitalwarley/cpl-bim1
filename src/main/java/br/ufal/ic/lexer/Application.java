@@ -12,16 +12,16 @@ public class Application {
 
     public static void main(String[] args) {
         /* To show the files that are being read */
-        boolean DEBUG = true;
+        boolean fromCli = true;
         /* Lexical analyser  */
         Lexer lexer = new Lexer();
         /* List of tokens that have been identified */
         tokenList = new ArrayList<>();
         /* Path to language examples used to test the scanner */
-        String path = "/Users/dayvsonsales/";
-        //String path = "/home/lativ/IdeaProjects/";
+        //String path = "/Users/dayvsonsales/";
+        String path = "/home/lativ/IdeaProjects/";
 
-        if (!DEBUG) {
+        if (!fromCli) {
             if (args.length <= 0) {
                 System.err.println("Usage: hapais <file>.hs --fly <optional>");
             }
@@ -31,12 +31,16 @@ public class Application {
 
                 }
             }
-            // String nome = args[0];
-        }
-        /*
-         * Example codes.
-         * */
-        if (DEBUG) {
+
+            String source = args[0];
+            System.out.println("Start: " + source);
+            readFiles(source, new Lexer());
+            System.out.println("End: " + source);
+
+        } else {
+            /*
+             * Example codes.
+             */
             System.out.println("Start: hello.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/hello.hs"), new Lexer());
             System.out.println("End: hello.hs");

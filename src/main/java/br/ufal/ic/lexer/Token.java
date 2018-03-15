@@ -82,7 +82,10 @@ public class Token {
     }
 
     public String toString() {
-        return String.format("[%03d, %03d] (%04d, %10s) {%s}", row, column, tag.ordinal(), tag, value);
+        if (!msg.equals(""))
+            return String.format("[%03d, %03d] (%04d, %10s) {%s}\n{%s}", row, column, tag.ordinal(), tag, value, msg);
+        else
+            return String.format("[%03d, %03d] (%04d, %10s) {%s}", row, column, tag.ordinal(), tag, value);
     }
 
     @Override
