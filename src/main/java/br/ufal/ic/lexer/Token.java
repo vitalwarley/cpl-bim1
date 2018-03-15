@@ -82,10 +82,18 @@ public class Token {
     }
 
     public String toString() {
+
+        String msg_error = String.format(msg, row);
+
+        /* If msg is not empty, then something bad occurred */
         if (!msg.equals(""))
-            return String.format("[%03d, %03d] (%04d, %10s) {%s}\n{%s}", row, column, tag.ordinal(), tag, value, msg);
+            return String.
+                    format("[%03d, %03d] (%04d, %10s) {%s}\n{ERROR: %s}",
+                            row, column, tag.ordinal(), tag, value, msg_error);
         else
-            return String.format("[%03d, %03d] (%04d, %10s) {%s}", row, column, tag.ordinal(), tag, value);
+            return String.
+                    format("[%03d, %03d] (%04d, %10s) {%s}",
+                            row, column, tag.ordinal(), tag, value);
     }
 
     @Override
