@@ -12,7 +12,7 @@ public class Application {
 
     public static void main(String[] args) {
         /* To show the files that are being read */
-        boolean fromCli = true;
+        boolean fromCli = false;
         /* Lexical analyser  */
         Lexer lexer = new Lexer();
         /* List of tokens that have been identified */
@@ -21,7 +21,7 @@ public class Application {
         //String path = "/Users/dayvsonsales/";
         String path = "/home/lativ/IdeaProjects/";
 
-        if (!fromCli) {
+        if (fromCli) {
             if (args.length <= 0) {
                 System.err.println("Usage: hapais <file>.hs --fly <optional>");
             }
