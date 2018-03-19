@@ -17,8 +17,8 @@ import java.util.List;
 
 class LexerTest {
     /* TODO: colocar path num application properties? */
-    String path = "/Users/dayvsonsales/";
-    // String path = "/home/lativ/IdeaProjects/";
+    //String path = "/Users/dayvsonsales/";
+    String path = "/home/lativ/IdeaProjects/";
 
     /*
      * @test Verificando se consegue trabalhar com constante REAL
@@ -235,11 +235,11 @@ class LexerTest {
     }
 
     @Test
-    void somaPrint() {
+    void aspasJuntas() {
         Lexer lexer = new Lexer();
 
         List<Token> actual = readFiles(String.join("", path,
-                "/cpl-bim1/examples/test/somaprint.hs"), lexer);
+                "/cpl-bim1/examples/test/aspasJuntas.hs"), lexer);
 
         List<Token> expected = new ArrayList<>();
 
@@ -250,21 +250,22 @@ class LexerTest {
                 TokenCategory.TK_ABPAR, 1, 6, "("
         ));
         expected.add(new Token(
-                TokenCategory.TK_CTEREAL, 1, 7, "42.42"
+                TokenCategory.TK_CTECHAR, 1, 7, "\"", true, MessageBR.CTECHAR_ERR
         ));
         expected.add(new Token(
-                TokenCategory.TK_OPA, 1, 12, "-"
+                TokenCategory.TK_ID, 1, 9, "teste"
         ));
         expected.add(new Token(
-                TokenCategory.TK_CTEREAL, 1, 13, "0.42"
+                TokenCategory.TK_CTESTR, 1, 14, ")", true, MessageBR.CTESTR_ERR
         ));
         expected.add(new Token(
-                TokenCategory.TK_FCPAR, 1, 17, ")"
+                TokenCategory.TK_EOF, 2, 1, ""
         ));
 
         assertThat(actual, is(expected));
 
     }
+
 
     private static List<Token> readFiles(String name, Lexer lexer) {
 
