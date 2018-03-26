@@ -18,8 +18,8 @@ public class Application {
         /* List of tokens that have been identified */
         tokenList = new ArrayList<>();
         /* Path to language examples used to test the scanner */
-        //String path = "/Users/dayvsonsales/";
-        String path = "/home/lativ/IdeaProjects/";
+        String path = "/Users/dayvsonsales/";
+        //String path = "/home/lativ/IdeaProjects/";
 
         if (fromCli) {
             if (args.length <= 0) {

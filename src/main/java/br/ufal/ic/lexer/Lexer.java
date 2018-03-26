@@ -19,8 +19,8 @@ public class Lexer {
     /* Store reserved words and identifiers */
     private Hashtable<String, TokenCategory> words = new Hashtable<>();
 
-    private final String REGEX_CHAR = "\'(.?)\'";
-    private final String REGEX_STR = "\"[\\\\d a-zA-Z_\\.,:;!+-\\?<>=\\(\\)\\[\\]{}\\'\"@%\\^\\\\]*\"";
+    private final String REGEX_CHAR = "\'([\\\\d a-zA-Z_\\.,:;!#+-\\?<>=\\(\\)\\[\\]{}\\'\"@%\\^\\\\]?)\'";
+    private final String REGEX_STR = "\"[\\\\d a-zA-Z_\\.,:;!#+-\\?<>=\\(\\)\\[\\]{}\\'\"@%\\^\\\\]*\"";
     private final String REGEX_IDENTIFIER = "[a-zA-Z][\\d[a-z][A-Z]]*";
     private final String REGEX_NUMBER = "\\d+";
     private final String REGEX_REAL = "\\d+\\.\\d+";
@@ -273,11 +273,8 @@ public class Lexer {
         }
 
         if (!current.equals("")) {
-            return new Token(TokenCategory.TK_UKN, row, column - (current.length() - 1), current);
+            return new Token(TokenCategory.TK_UKN, row, column - (current.length() - 1), current, true, UNKNOW);
         }
-
-        if (column == 0)
-            column = 1;
 
         return new Token(TokenCategory.TK_EOF, row, column, current);
     }

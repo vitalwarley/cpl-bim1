@@ -18,6 +18,10 @@ public class Token {
     public Token(TokenCategory tag, int row, int column, String value) {
         this.tag = tag;
         this.row = row;
+
+        if (column == 0)
+            column = 1;
+
         this.column = column;
         this.value = value;
         this.error = false;
@@ -27,6 +31,10 @@ public class Token {
     public Token(TokenCategory tag, int row, int column, String value, boolean error, String msg) {
         this.tag = tag;
         this.row = row;
+
+        if (column == 0)
+            column = 1;
+
         this.column = column;
         this.value = value;
         this.error = error;
@@ -83,7 +91,7 @@ public class Token {
 
     public String toString() {
 
-        String msg_error = String.format(msg, row);
+        String msg_error = String.format(msg, column, row);
 
         /* If msg is not empty, then something bad occurred */
         if (!msg.equals(""))
