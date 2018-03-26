@@ -18,8 +18,8 @@ public class Application {
         /* List of tokens that have been identified */
         tokenList = new ArrayList<>();
         /* Path to language examples used to test the scanner */
-        //String path = "/Users/dayvsonsales/";
-        String path = "/home/lativ/IdeaProjects/";
+        String path = "/Users/dayvsonsales/";
+        //String path = "/home/lativ/IdeaProjects/";
 
         if (fromCli) {
             if (args.length <= 0) {
@@ -53,6 +53,9 @@ public class Application {
             System.out.println("Start: test.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/test.hs"), new Lexer());
             System.out.println("End: test.hs");
+            System.out.println("Start: testt.hs");
+            readFiles(String.join("", path, "cpl-bim1/examples/testt.hs"), new Lexer());
+            System.out.println("End: testt.hs");
         }
     }
 

@@ -16,9 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 class LexerTest {
-    /* TODO: colocar path num application properties? */
-    //String path = "/Users/dayvsonsales/";
-    String path = "/home/lativ/IdeaProjects/";
+    String path = "/Users/dayvsonsales/";
+    //String path = "/home/lativ/IdeaProjects/";
 
     /*
      * @test Verificando se consegue trabalhar com constante REAL
