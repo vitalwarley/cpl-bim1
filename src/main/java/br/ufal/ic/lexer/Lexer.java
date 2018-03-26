@@ -71,6 +71,7 @@ public class Lexer {
                     /* Read again */
                     char t = (char) file.read();    /* We cast to char because file.read() returns the data in bytes. */
                     if (t == '=') {     /* If next lexeme is '=', we create a new Token */
+                        current = current + "=";
                         nextToken = new Token(TokenCategory.TK_REL2, row, column - (current.length() - 1), current);
                         current = "";
                     } else {
@@ -92,11 +93,11 @@ public class Lexer {
                 case "\'":
                     char c = (char) file.read();
 
-                    if(c == '\n'){
+                    if (c == '\n') {
                         nextToken = new Token(TokenCategory.TK_CTECHAR, row, column - (current.length() - 1), getCharWithoutFirst(current), true, CTECHAR_ERR);
                         current = Character.toString(c);
                         rollback = true;
-                        return  nextToken;
+                        return nextToken;
                     }
 
                     if (c == '\\') {
@@ -120,8 +121,8 @@ public class Lexer {
                          * If so, accumulate.
                          */
                         if (this.file.available() > 0 && (c != '\'')) {
-                                column++;
-                                current = current + c;
+                            column++;
+                            current = current + c;
                         }
                     }
 
@@ -156,11 +157,11 @@ public class Lexer {
                 case "\"":  /* This double quote can define a new ctStr */
                     char d = (char) file.read(); /* Read next char */
                     /**
-                    * While d IS NOT a double quote (that is, we haven't reached the string's end),
+                     * While d IS NOT a double quote (that is, we haven't reached the string's end),
                      * AND a new line char
                      * AND there is something to read
                      * ...
-                    * */
+                     * */
                     while (d != '\"' && d != '\n' && this.file.available() > 0) {
                         column++;
                         current = current + d;      /* Accumulate current */

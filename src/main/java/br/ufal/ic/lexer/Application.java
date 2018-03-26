@@ -53,6 +53,9 @@ public class Application {
             System.out.println("Start: test.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/test.hs"), new Lexer());
             System.out.println("End: test.hs");
+            System.out.println("Start: testt.hs");
+            readFiles(String.join("", path, "cpl-bim1/examples/testt.hs"), new Lexer());
+            System.out.println("End: testt.hs");
         }
     }
 

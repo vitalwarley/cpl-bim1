@@ -3,7 +3,6 @@ package br.ufal.ic.lexer;
 public enum TokenCategory {
 
     TK_ID,
-    TK_COMMENT,
 
     TK_DEFMOD,
     TK_DEF,
