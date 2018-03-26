@@ -12,7 +12,7 @@ public class Application {
 
     public static void main(String[] args) {
         /* To show the files that are being read */
-        boolean fromCli = false;
+        boolean fromCli = true;
         /* Lexical analyser  */
         Lexer lexer = new Lexer();
         /* List of tokens that have been identified */

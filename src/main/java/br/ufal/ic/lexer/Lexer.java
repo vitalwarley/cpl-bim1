@@ -213,12 +213,15 @@ public class Lexer {
             if (current.matches(REGEX_NUMBER)) {
                 char number = (char) file.read();
 
+                /* If char is a number */
                 while (Character.isDigit(number)) {
                     column++;
                     current = current + number;
                     number = (char) file.read();
                 }
 
+                /* If next char is not a dot */
+                /* That is, the accumulated is not real */
                 if (number != '.') {
                     rollback = true;
                     nextToken = new Token(TokenCategory.TK_CTEINT, row, column - (current.length() - 1), current);
@@ -226,6 +229,7 @@ public class Lexer {
                     return nextToken;
                 }
 
+                /* Actually, the number's type is real */
                 column++;
                 current = current + number;
 
@@ -239,6 +243,7 @@ public class Lexer {
 
                 rollback = true;
 
+                /* In case we don't match a real number, we assign a error msg in the created token */
                 if (current.matches(REGEX_REAL)) {
                     nextToken = new Token(TokenCategory.TK_CTEREAL, row, column - (current.length() - 1), current);
                 } else {
@@ -250,6 +255,7 @@ public class Lexer {
                 return nextToken;
             }
 
+            /* Se if we can match an identifier already */
             if (current.matches(REGEX_IDENTIFIER)) {
                 char e = (char) file.read();
                 while (Character.isLetterOrDigit(e)) {
@@ -260,18 +266,21 @@ public class Lexer {
 
                 rollback = true;
 
+                /* The identifier can be a reserved word, and here we look for it */
                 if (words.containsKey(current)) {
                     nextToken = new Token(words.get(current), row, column - (current.length() - 1), current);
                     current = Character.toString(e);
                     return nextToken;
                 }
 
+                /* In case it is not a reserve word, we can create a new token */
                 nextToken = new Token(TokenCategory.TK_ID, row, column - (current.length() - 1), current);
                 current = Character.toString(e);
                 return nextToken;
             }
         }
 
+        /* Nothing goes right, so here we assign what we read to a TK_UKN */
         if (!current.equals("")) {
             return new Token(TokenCategory.TK_UKN, row, column - (current.length() - 1), current);
         }
@@ -282,10 +291,12 @@ public class Lexer {
         return new Token(TokenCategory.TK_EOF, row, column, current);
     }
 
+    /* Get always first char of an accumulated current */
     private String getChar(String c) {
         return c.substring(1, c.length() - 1);
     }
 
+    /* Get first char of a string */
     private String getCharWithoutFirst(String c) {
         return c.substring(1, c.length());
     }
@@ -354,7 +365,4 @@ public class Lexer {
         return rollback;
     }
 
-    public void setRollback(boolean rollback) {
-        this.rollback = rollback;
-    }
 }
