@@ -23,20 +23,13 @@ public class Application {
 
         if (fromCli) {
             if (args.length <= 0) {
-                System.err.println("Usage: hapais <file>.hs --fly <optional>");
+                System.err.println("Usage: hapais <file>.hs");
+            } else {
+                String source = args[0];
+                System.out.println("Start: " + source);
+                readFiles(source, new Lexer());
+                System.out.println("End: " + source);
             }
-            if (args.length > 1) {
-                String opcao = args[1];
-                if (opcao.equals("--fly")) {
-
-                }
-            }
-
-            String source = args[0];
-            System.out.println("Start: " + source);
-            readFiles(source, new Lexer());
-            System.out.println("End: " + source);
-
         } else {
             /*
              * Example codes.
@@ -50,12 +43,6 @@ public class Application {
             System.out.println("Start: shell.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/shell.hs"), new Lexer());
             System.out.println("End: shell.hs");
-            System.out.println("Start: test.hs");
-            readFiles(String.join("", path, "cpl-bim1/examples/test.hs"), new Lexer());
-            System.out.println("End: test.hs");
-            System.out.println("Start: testt.hs");
-            readFiles(String.join("", path, "cpl-bim1/examples/testt.hs"), new Lexer());
-            System.out.println("End: testt.hs");
         }
     }
 

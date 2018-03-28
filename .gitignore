@@ -1,6 +1,7 @@
 .git/
 .idea/
 *.iml
+*.class
 */teste/**
-target/**
+**/target/**
 */out/**
