@@ -2,7 +2,7 @@ defmod Shellsort do
 
   def int[] shellsort(valores : int[]) do
     
-    int n = len(valores); # retorna tamanho do array valores, aqui nao eh comando para os tokens
+    int n = len(valores); #-- retorna tamanho do array valores, aqui nao eh comando para os tokens
     int h = 1;
 
     until(h < n) do

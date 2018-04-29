@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Application {
 
@@ -12,14 +13,14 @@ public class Application {
 
     public static void main(String[] args) {
         /* To show the files that are being read */
-        boolean fromCli = true;
+        boolean fromCli = false;
         /* Lexical analyser  */
         Lexer lexer = new Lexer();
         /* List of tokens that have been identified */
         tokenList = new ArrayList<>();
         /* Path to language examples used to test the scanner */
-        String path = "/Users/dayvsonsales/";
-        //String path = "/home/lativ/IdeaProjects/";
+        //String path = "/Users/dayvsonsales/";
+        String path = "/home/lativ/IdeaProjects/";
 
         if (fromCli) {
             if (args.length <= 0) {
@@ -57,10 +58,33 @@ public class Application {
         try {
             /* Take next token while there is data on the file to be read */
             Token currentToken = null;
+            // new
+            List<Token> inLineTks = new ArrayList<>();
+            int actualRow = 1;
+
             while (lexer.getFile().available() > 0 || lexer.isRollback()) {
                 currentToken = lexer.nextToken();
                 tokenList.add(currentToken);
-                System.out.println(currentToken);
+                /* Changes to comply with 2nd bimester work:
+                 *
+                 *   [001, 001] (0001,  TK_DEFMOD) {defmod}
+                 *   [001, 008] (0000,      TK_ID) {Shellsort}
+                 *   [001, 018] (0003,      TK_DO) {do}
+                 *
+                 *   would be now this
+                 *
+                 *   001  TK_DEFMOD TK_ID TK_DO
+                 *
+                 * */
+                if (currentToken.getRow() == actualRow) {
+                    actualRow = currentToken.getRow();
+                    inLineTks.add(currentToken);
+                } else {
+                    actualRow = currentToken.getRow();
+                    inLineTks.add(currentToken);
+                    printTokensInLine(inLineTks);
+                    inLineTks.clear();
+                }
             }
             if (currentToken.getTag() != TokenCategory.TK_EOF) {
                 tokenList.add(new Token(TokenCategory.TK_EOF, currentToken.getRow(), currentToken.getColumn() + 1, ""));
@@ -72,5 +96,25 @@ public class Application {
             e.printStackTrace();
         }
     }
+
+    private static void printTokensInLine(List<Token> inLineTks) {
+        String out = String.valueOf(
+                        String.format("%03d  ", inLineTks.get(0).getRow())
+        );
+
+        String tks = inLineTks
+                .stream()
+                .map(Token::getTag)
+                .collect(Collectors.toList())
+                .toString();
+
+        tks = tks.replace('[',' ');
+        tks = tks.replace(']',' ');
+        tks = tks.replace(',', ' ');
+
+        System.out.println(out + tks);
+
+    }
+
 
 }
