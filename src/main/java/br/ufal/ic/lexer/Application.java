@@ -98,21 +98,15 @@ public class Application {
     }
 
     private static void printTokensInLine(List<Token> inLineTks) {
-        String out = String.valueOf(
-                        String.format("%03d  ", inLineTks.get(0).getRow())
-        );
 
-        String tks = inLineTks
+        List<String> tks = inLineTks
                 .stream()
-                .map(Token::getTag)
-                .collect(Collectors.toList())
-                .toString();
+                .map(tk -> tk.getTag().toString() + " ")
+                .collect(Collectors.toList());
 
-        tks = tks.replace('[',' ');
-        tks = tks.replace(']',' ');
-        tks = tks.replace(',', ' ');
-
-        System.out.println(out + tks);
+        System.out.print(String.format("%04d  ", inLineTks.get(0).getRow()));
+        tks.forEach(System.out::print);
+        System.out.println();
 
     }
 
