@@ -76,16 +76,8 @@ public class Application {
                  *   001  TK_DEFMOD TK_ID TK_DO
                  *
                  * */
-                if (currentToken.getRow() == actualRow) {
-                    actualRow = currentToken.getRow();
-                    inLineTks.add(currentToken);
-                } else {
-                    actualRow = currentToken.getRow();
-                    inLineTks.add(currentToken);
-                    printTokensInLine(inLineTks);
-                    inLineTks.clear();
-                }
-            }
+                actualRow = checkRowToken(inLineTks, currentToken, actualRow);
+           }
             if (currentToken.getTag() != TokenCategory.TK_EOF) {
                 tokenList.add(new Token(TokenCategory.TK_EOF, currentToken.getRow(), currentToken.getColumn() + 1, ""));
                 System.out.println(tokenList.get(tokenList.size() - 1));
@@ -95,6 +87,17 @@ public class Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static int checkRowToken(List<Token> inLineTks, Token currentToken, int actualRow) {
+        if (currentToken.getRow() != actualRow) {
+            printTokensInLine(inLineTks);
+            inLineTks.clear();
+        }
+
+        inLineTks.add(currentToken);
+
+        return currentToken.getRow();
     }
 
     private static void printTokensInLine(List<Token> inLineTks) {
