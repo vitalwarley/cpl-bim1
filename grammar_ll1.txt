@@ -1,0 +1,95 @@
+S -> defmod id do Global RFuncoes endmod
+Global -> RDeclVar 
+RFuncoes -> Funcoes RFuncoes
+RFuncoes -> ''
+Funcoes -> def TipoFuncao id ( Parametro ) do Instrucao end
+Return -> return Exp ;
+TipoFuncao -> Tipo FArr
+FArr -> [ ]
+FArr -> ''
+Tipo -> int
+Tipo -> void
+Tipo -> str
+Tipo -> real
+Tipo -> bool
+Tipo -> char
+TipoFixo -> Tipo FArr
+Parametro -> id : TipoFixo Parametro
+Parametro -> , id : TipoFixo
+Parametro -> ''
+Instrucao -> Comando RInstrucao
+RInstrucao -> ''
+Comando -> Rep Comando
+Comando -> DoUntil Comando
+Comando -> Until Comando
+Comando -> When Comando
+Comando -> TipoFixo id ComandoA ; Comando
+Comando -> id RArr ComandoX Comando
+ComandoX -> = Exp ; 
+ComandoX -> ( ParFunc ) ;
+ComandoX -> '' 
+ComandoA -> = ComandoAX
+ComandoAX -> Exp 
+ComandoA -> ''
+Comando -> Return
+Comando -> ''
+Atrib -> Id = Exp ; 
+Atrib -> ''
+Id -> id Arr
+RDeclVar -> DeclVar RDeclVar
+RDeclVar -> ''
+DeclVar -> TipoFixo Atrib ;
+Arr -> [ Exp ]
+Arr -> ''
+RArr -> [ LRArr ]
+RArr -> ''
+LRArr -> Exp
+LRArr -> ''
+When -> when ( Exp ) do Instrucao end
+Otherwise -> otherwise Instrucao
+Otherwise -> '' 
+Until -> until ( Exp ) do Instrucao end
+DoUntil -> do Instrucao till ( Exp ) end
+Rep -> rep ( VarControl , Exp , Id = Exp ) do Instrucao end
+VarControl -> id : Tipo = Exp
+ParFunc -> RParFunc
+ParFunc -> ''
+RParFunc -> Exp TRParFunc
+TRParFunc -> , Exp TParFunc
+TRParFunc -> ''
+TParFunc -> ''
+Exp -> ExpBoolAnd RExp
+RExp -> || ExpBoolAnd RExp
+RExp -> ''
+ExpBoolAnd -> ExpRDois RExpBoolAnd
+RExpBoolAnd -> && ExpRDois RExpBoolAnd
+RExpBoolAnd -> ''
+ExpRDois -> ExpRUm RExpRDois
+RExpRDois -> opr2 ExpRUm
+RExpRDois -> ''
+ExpRUm -> ExpConcat RExpRUm
+RExpRUm -> opr1 ExpConcat RExpRUm
+RExpRUm -> ''
+ExpConcat -> Expa RExpConcat 
+RExpConcat -> $ Expa RExpConcat
+RExpConcat -> ''
+Expa -> Expm RExpa
+RExpa -> opa Expm RExpa 
+RExpa -> ''
+Expm -> ExpU RExpm
+RExpm -> opm ExpU RExpm 
+RExpm -> ''
+ExpU -> Unario Fa
+ExpU -> Fa
+Unario -> ~
+Unario -> -
+Fa -> ( Exp )
+Fa -> id RFa
+RFa -> ( ParFunc )
+RFa -> RArr
+Fa -> Cte
+Cte -> cteI
+Cte -> cteR
+Cte -> cteStr
+Cte -> cteChar
+Cte -> cteBool
