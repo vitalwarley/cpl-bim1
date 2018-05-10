@@ -3,26 +3,14 @@ package br.ufal.ic.parser;
 import br.ufal.ic.lexer.Application;
 import javafx.util.Pair;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Parser {
 
     private Application application;
     private static Stack<String> stack = new Stack<>();
     private static Hashtable<Pair<String, String>, List<String>> parsingTable = new Hashtable<>();
-
-    //    private static List<String> nonTerminals = Arrays.asList("E", "E'", "T", "T'", "F");
-    private static Set<String> nonTerminals;
-    private static Map<String, List<String>> productions = new HashMap<>();
-    private static List<String> grammar;
-    private static HashMap<String, List<String>> first;
-    private static HashMap<String, List<String>> followt;
-
 
     public static void main(String[] args) {
         /*initParsingTableTest();
@@ -33,42 +21,9 @@ public class Parser {
             System.err.println("erro: stack vazia");
         }
         */
-        initGrammar("grammar_ll1.txt");
+        GrammarResources.initGrammar("grammar_ll1.txt");
     }
 
-    private static void initGrammar(String path) {
-        try (Stream<String> stream = Files.lines(Paths.get(path))) {
-            grammar = stream.collect(Collectors.toList());
-
-            nonTerminals = grammar.stream().
-                    map(s -> {
-                        addProduction(s);
-                        return s.split(" -> ")[0];
-                    }).
-                    collect(Collectors.toSet());
-
-        } catch (IOException e) {
-            System.err.println("Não foi possível ler o arquivo que contém a gramática.");
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void initParsingTableTest() {
-        String epsilon = "\uD835\uDEDC";
-        parsingTable.put(new Pair("E", "id"), Arrays.asList("T", "E'"));
-        parsingTable.put(new Pair("E", "("), Arrays.asList("T", "E'"));
-        parsingTable.put(new Pair("E'", "+"), Arrays.asList("+", "T", "E'"));
-        parsingTable.put(new Pair("E'", ")"), Arrays.asList(epsilon));
-        parsingTable.put(new Pair("E'", "$"), Arrays.asList(epsilon));
-        parsingTable.put(new Pair("T", "id"), Arrays.asList("F", "T'"));
-        parsingTable.put(new Pair("T", "("), Arrays.asList("F", "T'"));
-        parsingTable.put(new Pair("T'", "+"), Arrays.asList(epsilon));
-        parsingTable.put(new Pair("T'", "*"), Arrays.asList("*", "F", "T'"));
-        parsingTable.put(new Pair("T'", ")"), Arrays.asList(epsilon));
-        parsingTable.put(new Pair("T'", "$"), Arrays.asList(epsilon));
-        parsingTable.put(new Pair("F", "id"), Arrays.asList("id"));
-        parsingTable.put(new Pair("F", "("), Arrays.asList("(", "E", ")"));
-    }
 
 
     @SuppressWarnings("unchecked")
@@ -112,8 +67,7 @@ public class Parser {
     }
 
     private static boolean isTerminal(String symbol) {
-        return !nonTerminals.contains(symbol);
-
+        return GrammarResources.checkSymbolIsTerminal(symbol);
     }
 
     private static void error() {
@@ -128,14 +82,5 @@ public class Parser {
             productionReversed.add(production.get(i));
 
         return productionReversed;
-    }
-
-
-    private static void addProduction(String rule) {
-        String[] parts = rule.split(" -> ");
-        if (productions.get(parts[0]) == null)
-            productions.put(parts[0], new ArrayList<>(Arrays.asList(parts[1])));
-        else
-            productions.get(parts[0]).add(parts[1]);
     }
 }
