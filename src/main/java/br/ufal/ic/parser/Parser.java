@@ -24,7 +24,11 @@ public class Parser {
         GrammarResources.initGrammar("grammar_ll1.txt");
     }
 
+    @SuppressWarnings("unchecked")
+    private static void initParsingTableTest() {
+        String epsilon = "\uD835\uDEDC";
 
+    }
 
     @SuppressWarnings("unchecked")
     public static void predictiveParsing(String[] input) throws EmptyStackException {

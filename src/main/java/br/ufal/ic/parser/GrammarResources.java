@@ -12,12 +12,11 @@ public class GrammarResources {
     private static Set<String> nonTerminals;
     private static Map<String, List<String>> productions = new HashMap<>();
 
+    private static List<String> grammar;
     private static HashMap<String, List<String>> first;
     private static HashMap<String, List<String>> follow;
 
     public static void initGrammar(String path) {
-
-        List<String> grammar;
 
         try (Stream<String> stream = Files.lines(Paths.get(path))) {
             grammar = stream.collect(Collectors.toList());
@@ -32,12 +31,6 @@ public class GrammarResources {
         } catch (IOException e) {
             System.err.println("Não foi possível ler o arquivo que contém a gramática.");
         }
-    }
-
-    @SuppressWarnings("unchecked")
-    private static void initParsingTableTest() {
-        String epsilon = "\uD835\uDEDC";
-
     }
 
     private static void addProduction(String rule) {
