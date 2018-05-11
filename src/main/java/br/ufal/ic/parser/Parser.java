@@ -5,6 +5,7 @@ import javafx.util.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Parser {
 
@@ -13,15 +14,22 @@ public class Parser {
     private Application application;
 
     public static void main(String[] args) {
+
         GrammarResources.initGrammar("grammar_428_aho.txt");
         GrammarResources.showProductions();
         GrammarResources.initFirstsAndFollows();
-        GrammarResources.showFirstsAndFollows();
+        GrammarResources.showFirstsOrFollows(GrammarResources.getFirsts(), "firsts");
+        GrammarResources.showFirstsOrFollows(GrammarResources.getFollows(), "follows");
+
         initParsingTable();
         showParsingTable();
 
-        System.out.println("MOVES MADE: ");
         String[] input = {"id", "+", "id", "*", "id", "$"};
+
+        System.out.println("MOVES MADE for input '" + Stream.of(input).
+                filter(item -> !item.equals("$")).
+                collect(Collectors.joining(" ")) + "': ");
+
         try {
             predictiveParsing(input);
         } catch (EmptyStackException e) {
@@ -54,38 +62,39 @@ public class Parser {
     private static void doFirstAndFollow(String nonTerminal, List<String> symbolsInProduction) {
         String actualSymbol = symbolsInProduction.get(0);
 
-        if (actualSymbol  == GrammarResources.getEpsilon())
+        if (actualSymbol.equals(GrammarResources.getEpsilon())) {
             GrammarResources.
                     getFollows().
                     get(nonTerminal).
                     forEach(
-                            term ->
-                                    addToParsingTable(nonTerminal, term, Arrays.asList(GrammarResources.getEpsilon()))
+                            term -> addToParsingTable(nonTerminal, term, Arrays.asList(GrammarResources.getEpsilon()))
 
                     );
-        else if (isTerminal(actualSymbol))
+        } else if (isTerminal(actualSymbol)) {
             addToParsingTable(nonTerminal, actualSymbol, symbolsInProduction);
-        else
+        } else {
             GrammarResources.
                     getFirsts().
                     get(actualSymbol).
                     forEach(
                             first -> {
-                                if (first == GrammarResources.getEpsilon())
+                                if (first.equals(GrammarResources.getEpsilon())) {
                                     GrammarResources.getFollows().
                                             get(actualSymbol).
                                             forEach(
                                                     follow ->
-                                                        addToParsingTable(nonTerminal,
-                                                                follow,
-                                                                symbolsInProduction
-                                                        )
+                                                            addToParsingTable(nonTerminal,
+                                                                    follow,
+                                                                    symbolsInProduction
+                                                            )
 
                                             );
-                                else
+                                } else {
                                     addToParsingTable(nonTerminal, first, symbolsInProduction);
+                                }
                             }
                     );
+        }
 
     }
 
@@ -136,7 +145,7 @@ public class Parser {
 
                 List<String> production = parsingTable.get(pair);
 
-                if (!production.contains("\uD835\uDEDC")) // epsilon don't go to the stack
+                if (!production.contains(GrammarResources.getEpsilon())) // epsilon don't go to the stack
                     stack.addAll(reverseProduction(production));
 
             }

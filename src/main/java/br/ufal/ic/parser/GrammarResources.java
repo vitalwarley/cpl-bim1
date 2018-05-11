@@ -1,7 +1,5 @@
 package br.ufal.ic.parser;
 
-import javafx.util.Pair;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -11,8 +9,7 @@ import java.util.stream.Stream;
 
 public class GrammarResources {
 
-
-    private static final String epsilon = "\uD835\uDEDC";
+    private static final String epsilon = "𝛜";
 
     private static List<String> grammar;
     private static Set<String> nonTerminals;
@@ -55,32 +52,31 @@ public class GrammarResources {
         follows.put("F", Arrays.asList("+", "*", ")", "$"));
     }
 
+    public static void showFirstsOrFollows(Map<String, List<String>> set, String setName) {
+        System.out.println(setName.toUpperCase() + ": ");
+
+        set. // first or follow
+                keySet().
+                forEach(k -> {
+                    System.out.print(k + ": { ");
+                    set
+                            .get(k)
+                            .forEach(f -> System.out.print(f + " "));
+                    System.out.println("}");
+                });
+    }
+
     private static void addProduction(String rule) {
         String[] parts = rule.split(" -> ");
 
         if (parts[1].equals("''"))
             parts[1] = epsilon;
 
-        if (productions.get(parts[0]) == null)
+        if (productions.get(parts[0]) == null) {
             productions.put(parts[0], new ArrayList<>(Arrays.asList(parts[1])));
-        else
+        } else {
             productions.get(parts[0]).add(parts[1]);
-    }
-
-    public static Set<String> getNonTerminals() {
-        return nonTerminals;
-    }
-
-    public static Map<String, List<String>> getProductions() {
-        return productions;
-    }
-
-    public static Map<String, List<String>> getFirsts() {
-        return firsts;
-    }
-
-    public static Map<String, List<String>> getFollows() {
-        return follows;
+        }
     }
 
     public static void showProductions() {
@@ -99,26 +95,16 @@ public class GrammarResources {
         return epsilon;
     }
 
-    public static void showFirstsAndFollows() {
-        System.out.println("FIRSTS: ");
-        firsts.
-                keySet().
-                forEach(k -> {
-                    System.out.print(k + ": { ");
-                    firsts
-                            .get(k)
-                            .forEach(f -> System.out.print(f + " "));
-                    System.out.println("}");
-                });
-        System.out.println("FOLLOW: ");
-        follows.
-                keySet().
-                forEach(k -> {
-                    System.out.print(k + ": { ");
-                    follows.
-                            get(k)
-                            .forEach(f -> System.out.print(f + " "));
-                    System.out.println("}");
-                });
+    public static Map<String, List<String>> getProductions() {
+        return productions;
     }
+
+    public static Map<String, List<String>> getFirsts() {
+        return firsts;
+    }
+
+    public static Map<String, List<String>> getFollows() {
+        return follows;
+    }
+
 }
