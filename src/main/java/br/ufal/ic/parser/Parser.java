@@ -8,26 +8,101 @@ import java.util.stream.Collectors;
 
 public class Parser {
 
-    private Application application;
     private static Stack<String> stack = new Stack<>();
     private static Hashtable<Pair<String, String>, List<String>> parsingTable = new Hashtable<>();
+    private Application application;
 
     public static void main(String[] args) {
-        /*initParsingTableTest();
+        GrammarResources.initGrammar("grammar_428_aho.txt");
+        GrammarResources.showProductions();
+        GrammarResources.initFirstsAndFollows();
+        GrammarResources.showFirstsAndFollows();
+        initParsingTable();
+        showParsingTable();
+
+        System.out.println("MOVES MADE: ");
         String[] input = {"id", "+", "id", "*", "id", "$"};
         try {
             predictiveParsing(input);
         } catch (EmptyStackException e) {
             System.err.println("erro: stack vazia");
         }
-        */
-        GrammarResources.initGrammar("grammar_ll1.txt");
+
+    }
+
+    private static void initParsingTable() {
+
+        /*  For each production A -> alpha of the grammar, do the following:
+         *
+         * 1. For each terminal a in FIRST(alpha), add A -> alpha to M[A, a].
+         * 2. If epsilon is in FIRST(alpha), then for each terminal b in FOLLOW(A), add A -> alpha
+         *    to M[A, b]. If epsilon is in FIRST(alpha) and $ is in FOLLOW(A), add A -> alpha
+         *    to M[A, $] as well.
+         */
+        GrammarResources.getProductions()
+                .keySet()
+                .forEach(nT ->
+                        GrammarResources.
+                                getProductions().
+                                get(nT).
+                                forEach(p -> doFirstAndFollow(nT, Arrays.asList(p.split(" ")))
+                                )
+                );
+
+    }
+
+    private static void doFirstAndFollow(String nonTerminal, List<String> symbolsInProduction) {
+        String actualSymbol = symbolsInProduction.get(0);
+
+        if (actualSymbol  == GrammarResources.getEpsilon())
+            GrammarResources.
+                    getFollows().
+                    get(nonTerminal).
+                    forEach(
+                            term ->
+                                    addToParsingTable(nonTerminal, term, Arrays.asList(GrammarResources.getEpsilon()))
+
+                    );
+        else if (isTerminal(actualSymbol))
+            addToParsingTable(nonTerminal, actualSymbol, symbolsInProduction);
+        else
+            GrammarResources.
+                    getFirsts().
+                    get(actualSymbol).
+                    forEach(
+                            first -> {
+                                if (first == GrammarResources.getEpsilon())
+                                    GrammarResources.getFollows().
+                                            get(actualSymbol).
+                                            forEach(
+                                                    follow ->
+                                                        addToParsingTable(nonTerminal,
+                                                                follow,
+                                                                symbolsInProduction
+                                                        )
+
+                                            );
+                                else
+                                    addToParsingTable(nonTerminal, first, symbolsInProduction);
+                            }
+                    );
+
     }
 
     @SuppressWarnings("unchecked")
-    private static void initParsingTableTest() {
-        String epsilon = "\uD835\uDEDC";
+    private static void addToParsingTable(String nonTerminal, String terminal, List<String> production) {
+        Pair pair = new Pair(nonTerminal, terminal);
+        parsingTable.put(pair, production);
+    }
 
+    private static void showParsingTable() {
+        System.out.println("PARSING TABLE: ");
+        parsingTable
+                .keySet()
+                .forEach(k -> {
+                    System.out.print("(" + k.getKey() + ", " + k.getValue() + ") : ");
+                    System.out.println(parsingTable.get(k));
+                });
     }
 
     @SuppressWarnings("unchecked")
@@ -48,9 +123,10 @@ public class Parser {
                 next = input[count];
                 stack.pop();
             } else if (isTerminal(X)) {
-                error();
+                System.out.println(X);
+                error("isTerminal");
             } else if (!parsingTable.containsKey(pair)) {
-                error();
+                error("!parsingTable.containsKey");
             } else { // M[X, a] contains production
 
                 System.out.println(X + " -> " + parsingTable.get(pair)
@@ -74,8 +150,8 @@ public class Parser {
         return GrammarResources.checkSymbolIsTerminal(symbol);
     }
 
-    private static void error() {
-        System.out.println("deu erro carai");
+    private static void error(String place) {
+        System.out.println("[" + place + "] deu erro carai");
         System.exit(1);
     }
 
