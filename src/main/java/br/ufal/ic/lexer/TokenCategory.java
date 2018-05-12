@@ -1,61 +1,75 @@
 package br.ufal.ic.lexer;
 
 public enum TokenCategory {
+    TK_ID("'id'"),
 
-    TK_ID,
+    TK_DEFMOD("'defmod'"),
+    TK_DEF("'def'"),
+    TK_DO("'do'"),
+    TK_END("'end'"),
+    TK_ENDMOD("'endmod'"),
 
-    TK_DEFMOD,
-    TK_DEF,
-    TK_DO,
-    TK_END,
-    TK_ENDMOD,
+    TK_UNTIL("'until'"),
+    TK_REP("'rep'"),
+    TK_WHEN("'when'"),
+    TK_RETURN("'return'"),
+    TK_OTRWISE("'otherwise'"),
 
-    TK_UNTIL,
-    TK_REP,
-    TK_WHEN,
-    TK_RETURN,
-    TK_OTRWISE,
+    TK_VOID("'void'"),
+    TK_INT("'int'"),
+    TK_REAL("'real'"),
+    TK_STR("'str'"),
+    TK_BOOL("'bool'"),
+    TK_CHAR("'char'"),
 
-    TK_VOID,
-    TK_INT,
-    TK_REAL,
-    TK_STR,
-    TK_BOOL,
-    TK_CHAR,
+    TK_CTEINT("'cteI'"),
+    TK_CTEREAL("'cteR'"),
+    TK_CTESTR("'cteStr'"),
+    TK_CTECHAR("'cteChar'"),
 
-    TK_CTEINT,
-    TK_CTEREAL,
-    TK_CTESTR,
-    TK_CTECHAR,
+    TK_SPTOR("','"),
+    TK_DPTS("':"),
+    TK_PVGL("';'"),
+    TK_READ("'id'"),
+    TK_PRINT("'id'"),
+    TK_LTVREAD("'id'"),
 
-    TK_SPTOR,
-    TK_DPTS,
-    TK_PVGL,
-    TK_READ,
-    TK_PRINT,
-    TK_LTVREAD,
+    TK_ABPAR("'('"),
+    TK_FCPAR("')'"),
+    TK_ABCOL("'["),
+    TK_FCCOL("']'"),
+    TK_TRUE("'true'"),
+    TK_FALSE("'false'"),
+    TK_NIL("'nil'"),
 
-    TK_ABPAR,
-    TK_FCPAR,
-    TK_ABCOL,
-    TK_FCCOL,
-    TK_TRUE,
-    TK_FALSE,
-    TK_NIL,
-    TK_OPA,
-    TK_OPM,
-    TK_ATR,
-    TK_REL,
-    TK_REL2,
-    TK_AND,
-    TK_OR,
-    TK_NOT,
+    TK_OPA("'opa'"),
+    TK_OPM("'opm'"),
+    TK_ATR("'='"),
+    TK_REL("'opr1'"),
+    TK_REL2("'opr2'"),
+    TK_AND("'&&'"),
+    TK_OR("'||'"),
+    TK_NOT("'~'"),
 
-    TK_CONCAT,
+    TK_CONCAT("'$'"),
 
-    TK_EOF,
+    TK_EOF("EOF"),
 
-    TK_UKN
+    TK_UKN("UKN");
 
+    private String value;
+
+    TokenCategory(final String value) {
+        this.value = value;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    public String toString() {
+        return getValue();
+    }
 }
 

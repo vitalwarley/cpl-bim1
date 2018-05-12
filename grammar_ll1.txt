@@ -45,7 +45,7 @@ RArr -> [ LRArr ]
 RArr -> ''
 LRArr -> Exp
 LRArr -> ''
-When -> when ( Exp ) do Instrucao end
+When -> when ( Exp ) do Instrucao Otherwise end
 Otherwise -> otherwise Instrucao
 Otherwise -> '' 
 Until -> until ( Exp ) do Instrucao end

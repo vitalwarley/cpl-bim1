@@ -18,9 +18,9 @@ public class GrammarResources {
     private static Map<String, List<String>> firsts;
     private static Map<String, List<String>> follows;
 
-    public static void initGrammar(String path) {
+    public static void initGrammar(String grammarPath) {
 
-        try (Stream<String> stream = Files.lines(Paths.get(path))) {
+        try (Stream<String> stream = Files.lines(Paths.get(grammarPath))) {
             grammar = stream.collect(Collectors.toList());
 
             nonTerminals = grammar.stream().

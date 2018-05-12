@@ -1,9 +1,16 @@
-package br.ufal.ic.lexer;
+package br.ufal.ic;
+
+import br.ufal.ic.lexer.Lexer;
+import br.ufal.ic.lexer.Token;
+import br.ufal.ic.lexer.TokenCategory;
+import br.ufal.ic.parser.GrammarResources;
+import br.ufal.ic.parser.Parser;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +35,7 @@ public class Application {
             } else {
                 String source = args[0];
                 System.out.println("Start: " + source);
-                readFiles(source, new Lexer());
+                readFiles(source, lexer);
                 System.out.println("End: " + source);
             }
         } else {
@@ -36,20 +43,48 @@ public class Application {
              * Example codes.
              */
             System.out.println("Start: hello.hs");
-            readFiles(String.join("", path, "cpl-bim1/examples/hello.hs"), new Lexer());
+            doScanner(path, lexer);
+            doParser("grammar_ll1.txt", path, lexer);
             System.out.println("End: hello.hs");
-            System.out.println("Start: fib.hs");
+            /*System.out.println("Start: fib.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/fib.hs"), new Lexer());
             System.out.println("End: fib.hs");
             System.out.println("Start: shell.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/shell.hs"), new Lexer());
-            System.out.println("End: shell.hs");
+            System.out.println("End: shell.hs");*/
         }
     }
 
-    private static void readFiles(String name, Lexer lexer) {
+    private static void doScanner(String path, Lexer lexer) {
+        readFiles(String.join("", path, "cpl-bim1/examples/hello.hs"), lexer);
+    }
+
+    private static void doParser(String grammar, String codePath, Lexer lexer) {
+        GrammarResources.initGrammar(grammar);
+        Parser.fillParsingTable();
+
+        List<String> input = Application.
+                getAllTokens(
+                        String.join("",codePath, "cpl-bim1/examples/hello.hs"),
+                        lexer);
+
+        input.add("EOF");
+
+        System.out.println();
+        System.out.println("MOVES MADE for input < " + input.stream().
+                filter(item -> !item.equals("EOF")).
+                collect(Collectors.joining(" ")) + " >: ");
+
         try {
-            String path = name;
+            Parser.predictiveParsing(input);
+        } catch (EmptyStackException e) {
+            System.err.println("erro: stack vazia");
+        }
+
+    }
+
+    private static void readFiles(String path, Lexer lexer) {
+        try {
             lexer.setFile(new FileInputStream(path));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -77,8 +112,9 @@ public class Application {
                  *
                  * */
                 actualRow = checkRowToken(inLineTks, currentToken, actualRow);
-           }
-            if (currentToken.getTag() != TokenCategory.TK_EOF) {
+            }
+
+            if (currentToken != null && (currentToken.getTag() != TokenCategory.TK_EOF)) {
                 tokenList.add(new Token(TokenCategory.TK_EOF, currentToken.getRow(), currentToken.getColumn() + 1, ""));
                 System.out.println(tokenList.get(tokenList.size() - 1));
             }
@@ -87,6 +123,30 @@ public class Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static List<String> getAllTokens(String path, Lexer lexer) {
+        List<String> allTokens = null;
+
+        try {
+            lexer.setFile(new FileInputStream(path));
+        } catch (FileNotFoundException e) {
+            System.err.println("erro na leitura do código fonte!");
+        }
+
+        try {
+            Token currentToken;
+            allTokens = new ArrayList<>();
+
+            while (lexer.getFile().available() > 0 || lexer.isRollback()) {
+                currentToken = lexer.nextToken();
+                allTokens.add(currentToken.getTag().getValue());
+            }
+        } catch (IOException e) {
+            System.err.println("erro na leitura do contéudo do código fonte");
+        }
+
+        return allTokens;
     }
 
     private static int checkRowToken(List<Token> inLineTks, Token currentToken, int actualRow) {
@@ -104,7 +164,7 @@ public class Application {
 
         List<String> tks = inLineTks
                 .stream()
-                .map(tk -> tk.getTag().toString() + " ")
+                .map(tk -> tk.getTag() + " ")
                 .collect(Collectors.toList());
 
         System.out.print(String.format("%04d  ", inLineTks.get(0).getRow()));
@@ -112,6 +172,4 @@ public class Application {
         System.out.println();
 
     }
-
-
 }

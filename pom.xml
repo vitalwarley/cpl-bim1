@@ -40,7 +40,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>br.ufal.ic.lexer.Application</mainClass>
+                            <mainClass>br.ufal.ic.Application</mainClass>
                         </manifest>
                     </archive>
                     </configuration>
