@@ -1,5 +1,6 @@
 package br.ufal.ic.parser;
 
+import br.ufal.ic.lexer.Token;
 import javafx.util.Pair;
 
 import java.util.*;
@@ -11,7 +12,7 @@ public class Parser {
     private static Hashtable<Pair<String, String>, List<String>> parsingTable = new Hashtable<>();
 
     public static void fillParsingTable() {
-        addToParsingTable("S", "defmod", Arrays.asList("defmod", "id", "do", "Global", "RFuncoes", "endmod"));
+        addToParsingTable("S", "defmod", Arrays.asList("defmod", "id", "do", "Global", "DeclFuncoes", "endmod"));
         addToParsingTable("Global", "endmod", Arrays.asList("RDeclVar"));
         addToParsingTable("Global", "def", Arrays.asList("RDeclVar"));
         addToParsingTable("Global", "int", Arrays.asList("RDeclVar"));
@@ -22,9 +23,9 @@ public class Parser {
         addToParsingTable("Global", "char", Arrays.asList("RDeclVar"));
         addToParsingTable("Global", "$", Arrays.asList("RDeclVar"));
         addToParsingTable("Global", "EOF", Arrays.asList("RDeclVar"));
-        addToParsingTable("RFuncoes", "endmod", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RFuncoes", "def", Arrays.asList("Funcoes", "RFuncoes"));
-        addToParsingTable("Funcoes", "def", Arrays.asList("def", "TipoFuncao", "id", "(", "Parametro", ")", "do", "Instrucao", "end"));
+        addToParsingTable("DeclFuncoes", "endmod", Arrays.asList(GrammarResources.getEpsilon()));
+        addToParsingTable("DeclFuncoes", "def", Arrays.asList("Funcao", "DeclFuncoes"));
+        addToParsingTable("Funcao", "def", Arrays.asList("def", "TipoFuncao", "id", "(", "Parametro", ")", "do", "Instrucao", "end"));
         addToParsingTable("Return", "return", Arrays.asList("return", "Exp", ";"));
         addToParsingTable("TipoFuncao", "int", Arrays.asList("Tipo", "FArr"));
         addToParsingTable("TipoFuncao", "void", Arrays.asList("Tipo", "FArr"));
@@ -37,7 +38,7 @@ public class Parser {
         addToParsingTable("FArr", "def", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("FArr", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("FArr", ";", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("FArr", "[", Arrays.asList("[", "]"));
+        addToParsingTable("FArr", "[", Arrays.asList("[", "RFArr", "]"));
         addToParsingTable("FArr", "int", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("FArr", "void", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("FArr", "str", Arrays.asList(GrammarResources.getEpsilon()));
@@ -47,6 +48,17 @@ public class Parser {
         addToParsingTable("FArr", ",", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("FArr", "$", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("FArr", "EOF", Arrays.asList(GrammarResources.getEpsilon()));
+        addToParsingTable("RFArr", "id", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "(", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "]", Arrays.asList(GrammarResources.getEpsilon()));
+        addToParsingTable("RFArr", "~", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "-", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "cteI", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "cteR", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "cteStr", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "cteChar", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "true", Arrays.asList("Exp"));
+        addToParsingTable("RFArr", "false", Arrays.asList("Exp"));
         addToParsingTable("Tipo", "int", Arrays.asList("int"));
         addToParsingTable("Tipo", "void", Arrays.asList("void"));
         addToParsingTable("Tipo", "str", Arrays.asList("str"));
@@ -95,34 +107,10 @@ public class Parser {
         addToParsingTable("Comando", "until", Arrays.asList("Until", "Comando"));
         addToParsingTable("Comando", "till", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("Comando", "rep", Arrays.asList("Rep", "Comando"));
-        addToParsingTable("ComandoX", "id", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "do", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("ComandoX", "(", Arrays.asList("(", "ParFunc", ")", ";"));
-        addToParsingTable("ComandoX", "end", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "return", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "int", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "void", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "str", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "real", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "bool", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "char", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("ComandoX", "=", Arrays.asList("=", "Exp", ";"));
-        addToParsingTable("ComandoX", "when", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "otherwise", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "until", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "till", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoX", "rep", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("ComandoA", ";", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("ComandoA", "=", Arrays.asList("=", "ComandoAX"));
-        addToParsingTable("ComandoAX", "id", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "(", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "~", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "-", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "cteI", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "cteR", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "cteStr", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "cteChar", Arrays.asList("Exp"));
-        addToParsingTable("ComandoAX", "cteBool", Arrays.asList("Exp"));
+        addToParsingTable("ComandoA", "=", Arrays.asList("=", "Exp"));
         addToParsingTable("Atrib", "id", Arrays.asList("Id", "=", "Exp", ";"));
         addToParsingTable("Atrib", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("Id", "id", Arrays.asList("id", "Arr"));
@@ -144,28 +132,13 @@ public class Parser {
         addToParsingTable("DeclVar", "char", Arrays.asList("TipoFixo", "Atrib", ";"));
         addToParsingTable("Arr", "[", Arrays.asList("[", "Exp", "]"));
         addToParsingTable("Arr", "=", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "id", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "do", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", "(", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", ")", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "end", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "return", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", "[", Arrays.asList("[", "LRArr", "]"));
         addToParsingTable("RArr", "]", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "int", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "void", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "str", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "real", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "bool", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "char", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", ",", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", "=", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "when", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "otherwise", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "until", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "till", Arrays.asList(GrammarResources.getEpsilon()));
-        addToParsingTable("RArr", "rep", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", "||", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", "&&", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RArr", "opr2", Arrays.asList(GrammarResources.getEpsilon()));
@@ -183,7 +156,8 @@ public class Parser {
         addToParsingTable("LRArr", "cteR", Arrays.asList("Exp"));
         addToParsingTable("LRArr", "cteStr", Arrays.asList("Exp"));
         addToParsingTable("LRArr", "cteChar", Arrays.asList("Exp"));
-        addToParsingTable("LRArr", "cteBool", Arrays.asList("Exp"));
+        addToParsingTable("LRArr", "true", Arrays.asList("Exp"));
+        addToParsingTable("LRArr", "false", Arrays.asList("Exp"));
         addToParsingTable("When", "when", Arrays.asList("when", "(", "Exp", ")", "do", "Otherwise", "end"));
         addToParsingTable("Otherwise", "id", Arrays.asList("Instrucao", "OtherwiseR"));
         addToParsingTable("Otherwise", "do", Arrays.asList("Instrucao", "OtherwiseR"));
@@ -203,8 +177,7 @@ public class Parser {
         addToParsingTable("OtherwiseR", "otherwise", Arrays.asList("otherwise", "Instrucao"));
         addToParsingTable("Until", "until", Arrays.asList("until", "(", "Exp", ")", "do", "Instrucao", "end"));
         addToParsingTable("DoUntil", "do", Arrays.asList("do", "Instrucao", "till", "(", "Exp", ")", "end"));
-        addToParsingTable("Rep", "rep", Arrays.asList("rep", "(", "VarControl", ",", "Exp", ",", "Id", "=", "Exp", ")",
-                "do", "Instrucao", "end"));
+        addToParsingTable("Rep", "rep", Arrays.asList("rep", "(", "VarControl", ",", "Exp", ",", "Id", "=", "Exp", ")", "do", "Instrucao", "end"));
         addToParsingTable("VarControl", "id", Arrays.asList("id", ":", "Tipo", "=", "Exp"));
         addToParsingTable("ParFunc", "id", Arrays.asList("RParFunc"));
         addToParsingTable("ParFunc", "(", Arrays.asList("RParFunc"));
@@ -215,7 +188,8 @@ public class Parser {
         addToParsingTable("ParFunc", "cteR", Arrays.asList("RParFunc"));
         addToParsingTable("ParFunc", "cteStr", Arrays.asList("RParFunc"));
         addToParsingTable("ParFunc", "cteChar", Arrays.asList("RParFunc"));
-        addToParsingTable("ParFunc", "cteBool", Arrays.asList("RParFunc"));
+        addToParsingTable("ParFunc", "true", Arrays.asList("RParFunc"));
+        addToParsingTable("ParFunc", "false", Arrays.asList("RParFunc"));
         addToParsingTable("RParFunc", "id", Arrays.asList("Exp", "TRParFunc"));
         addToParsingTable("RParFunc", "(", Arrays.asList("Exp", "TRParFunc"));
         addToParsingTable("RParFunc", "~", Arrays.asList("Exp", "TRParFunc"));
@@ -224,7 +198,8 @@ public class Parser {
         addToParsingTable("RParFunc", "cteR", Arrays.asList("Exp", "TRParFunc"));
         addToParsingTable("RParFunc", "cteStr", Arrays.asList("Exp", "TRParFunc"));
         addToParsingTable("RParFunc", "cteChar", Arrays.asList("Exp", "TRParFunc"));
-        addToParsingTable("RParFunc", "cteBool", Arrays.asList("Exp", "TRParFunc"));
+        addToParsingTable("RParFunc", "true", Arrays.asList("Exp", "TRParFunc"));
+        addToParsingTable("RParFunc", "false", Arrays.asList("Exp", "TRParFunc"));
         addToParsingTable("TRParFunc", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("TRParFunc", ",", Arrays.asList(",", "Exp", "TParFunc"));
         addToParsingTable("TParFunc", ")", Arrays.asList(GrammarResources.getEpsilon()));
@@ -236,7 +211,8 @@ public class Parser {
         addToParsingTable("Exp", "cteR", Arrays.asList("ExpBoolAnd", "RExp"));
         addToParsingTable("Exp", "cteStr", Arrays.asList("ExpBoolAnd", "RExp"));
         addToParsingTable("Exp", "cteChar", Arrays.asList("ExpBoolAnd", "RExp"));
-        addToParsingTable("Exp", "cteBool", Arrays.asList("ExpBoolAnd", "RExp"));
+        addToParsingTable("Exp", "true", Arrays.asList("ExpBoolAnd", "RExp"));
+        addToParsingTable("Exp", "false", Arrays.asList("ExpBoolAnd", "RExp"));
         addToParsingTable("RExp", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExp", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExp", "]", Arrays.asList(GrammarResources.getEpsilon()));
@@ -250,7 +226,8 @@ public class Parser {
         addToParsingTable("ExpBoolAnd", "cteR", Arrays.asList("ExpRDois", "RExpBoolAnd"));
         addToParsingTable("ExpBoolAnd", "cteStr", Arrays.asList("ExpRDois", "RExpBoolAnd"));
         addToParsingTable("ExpBoolAnd", "cteChar", Arrays.asList("ExpRDois", "RExpBoolAnd"));
-        addToParsingTable("ExpBoolAnd", "cteBool", Arrays.asList("ExpRDois", "RExpBoolAnd"));
+        addToParsingTable("ExpBoolAnd", "true", Arrays.asList("ExpRDois", "RExpBoolAnd"));
+        addToParsingTable("ExpBoolAnd", "false", Arrays.asList("ExpRDois", "RExpBoolAnd"));
         addToParsingTable("RExpBoolAnd", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpBoolAnd", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpBoolAnd", "]", Arrays.asList(GrammarResources.getEpsilon()));
@@ -265,7 +242,8 @@ public class Parser {
         addToParsingTable("ExpRDois", "cteR", Arrays.asList("ExpRUm", "RExpRDois"));
         addToParsingTable("ExpRDois", "cteStr", Arrays.asList("ExpRUm", "RExpRDois"));
         addToParsingTable("ExpRDois", "cteChar", Arrays.asList("ExpRUm", "RExpRDois"));
-        addToParsingTable("ExpRDois", "cteBool", Arrays.asList("ExpRUm", "RExpRDois"));
+        addToParsingTable("ExpRDois", "true", Arrays.asList("ExpRUm", "RExpRDois"));
+        addToParsingTable("ExpRDois", "false", Arrays.asList("ExpRUm", "RExpRDois"));
         addToParsingTable("RExpRDois", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpRDois", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpRDois", "]", Arrays.asList(GrammarResources.getEpsilon()));
@@ -281,7 +259,8 @@ public class Parser {
         addToParsingTable("ExpRUm", "cteR", Arrays.asList("ExpConcat", "RExpRUm"));
         addToParsingTable("ExpRUm", "cteStr", Arrays.asList("ExpConcat", "RExpRUm"));
         addToParsingTable("ExpRUm", "cteChar", Arrays.asList("ExpConcat", "RExpRUm"));
-        addToParsingTable("ExpRUm", "cteBool", Arrays.asList("ExpConcat", "RExpRUm"));
+        addToParsingTable("ExpRUm", "true", Arrays.asList("ExpConcat", "RExpRUm"));
+        addToParsingTable("ExpRUm", "false", Arrays.asList("ExpConcat", "RExpRUm"));
         addToParsingTable("RExpRUm", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpRUm", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpRUm", "]", Arrays.asList(GrammarResources.getEpsilon()));
@@ -298,7 +277,8 @@ public class Parser {
         addToParsingTable("ExpConcat", "cteR", Arrays.asList("Expa", "RExpConcat"));
         addToParsingTable("ExpConcat", "cteStr", Arrays.asList("Expa", "RExpConcat"));
         addToParsingTable("ExpConcat", "cteChar", Arrays.asList("Expa", "RExpConcat"));
-        addToParsingTable("ExpConcat", "cteBool", Arrays.asList("Expa", "RExpConcat"));
+        addToParsingTable("ExpConcat", "true", Arrays.asList("Expa", "RExpConcat"));
+        addToParsingTable("ExpConcat", "false", Arrays.asList("Expa", "RExpConcat"));
         addToParsingTable("RExpConcat", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpConcat", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpConcat", "]", Arrays.asList(GrammarResources.getEpsilon()));
@@ -317,7 +297,8 @@ public class Parser {
         addToParsingTable("Expa", "cteR", Arrays.asList("Expm", "RExpa"));
         addToParsingTable("Expa", "cteStr", Arrays.asList("Expm", "RExpa"));
         addToParsingTable("Expa", "cteChar", Arrays.asList("Expm", "RExpa"));
-        addToParsingTable("Expa", "cteBool", Arrays.asList("Expm", "RExpa"));
+        addToParsingTable("Expa", "true", Arrays.asList("Expm", "RExpa"));
+        addToParsingTable("Expa", "false", Arrays.asList("Expm", "RExpa"));
         addToParsingTable("RExpa", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpa", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpa", "]", Arrays.asList(GrammarResources.getEpsilon()));
@@ -337,7 +318,8 @@ public class Parser {
         addToParsingTable("Expm", "cteR", Arrays.asList("ExpU", "RExpm"));
         addToParsingTable("Expm", "cteStr", Arrays.asList("ExpU", "RExpm"));
         addToParsingTable("Expm", "cteChar", Arrays.asList("ExpU", "RExpm"));
-        addToParsingTable("Expm", "cteBool", Arrays.asList("ExpU", "RExpm"));
+        addToParsingTable("Expm", "true", Arrays.asList("ExpU", "RExpm"));
+        addToParsingTable("Expm", "false", Arrays.asList("ExpU", "RExpm"));
         addToParsingTable("RExpm", ")", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpm", ";", Arrays.asList(GrammarResources.getEpsilon()));
         addToParsingTable("RExpm", "]", Arrays.asList(GrammarResources.getEpsilon()));
@@ -358,7 +340,8 @@ public class Parser {
         addToParsingTable("ExpU", "cteR", Arrays.asList("Fa"));
         addToParsingTable("ExpU", "cteStr", Arrays.asList("Fa"));
         addToParsingTable("ExpU", "cteChar", Arrays.asList("Fa"));
-        addToParsingTable("ExpU", "cteBool", Arrays.asList("Fa"));
+        addToParsingTable("ExpU", "true", Arrays.asList("Fa"));
+        addToParsingTable("ExpU", "false", Arrays.asList("Fa"));
         addToParsingTable("Unario", "~", Arrays.asList("~"));
         addToParsingTable("Unario", "-", Arrays.asList("-"));
         addToParsingTable("Fa", "id", Arrays.asList("id", "RFa"));
@@ -367,7 +350,8 @@ public class Parser {
         addToParsingTable("Fa", "cteR", Arrays.asList("Cte"));
         addToParsingTable("Fa", "cteStr", Arrays.asList("Cte"));
         addToParsingTable("Fa", "cteChar", Arrays.asList("Cte"));
-        addToParsingTable("Fa", "cteBool", Arrays.asList("Cte"));
+        addToParsingTable("Fa", "true", Arrays.asList("Cte"));
+        addToParsingTable("Fa", "false", Arrays.asList("Cte"));
         addToParsingTable("RFa", "(", Arrays.asList("(", "ParFunc", ")"));
         addToParsingTable("RFa", ")", Arrays.asList("RArr"));
         addToParsingTable("RFa", ";", Arrays.asList("RArr"));
@@ -386,7 +370,10 @@ public class Parser {
         addToParsingTable("Cte", "cteR", Arrays.asList("cteR"));
         addToParsingTable("Cte", "cteStr", Arrays.asList("cteStr"));
         addToParsingTable("Cte", "cteChar", Arrays.asList("cteChar"));
-        addToParsingTable("Cte", "cteBool", Arrays.asList("cteBool"));
+        addToParsingTable("Cte", "true", Arrays.asList("CteBool"));
+        addToParsingTable("Cte", "false", Arrays.asList("CteBool"));
+        addToParsingTable("CteBool", "true", Arrays.asList("true"));
+        addToParsingTable("CteBool", "false", Arrays.asList("false"));
     }
 
     public static void initParsingTable() {
@@ -468,9 +455,9 @@ public class Parser {
     }
 
     @SuppressWarnings("unchecked")
-    public static void predictiveParsing(List<String> input) throws EmptyStackException {
+    public static void predictiveParsing(List<Token> input) throws EmptyStackException {
         int count = 0;
-        String next = input.get(count);
+        Token next = input.get(count);
         stack.push("EOF");
         stack.push("S");
         String X = stack.peek();
@@ -478,9 +465,10 @@ public class Parser {
         Pair<String, String> pair;
 
         while (!X.equals("EOF")) {
-            pair = new Pair(X, next);
-            if (X.equals(next)) {
-                System.out.println("match " + X);
+            pair = new Pair(X, next.getTag().getValue());
+            if (X.equals(next.getTag().getValue())) {
+                System.out.print(String.format("%14s", ""));
+                System.out.println(next);
                 count++;
                 next = input.get(count);
                 stack.pop();
@@ -490,9 +478,15 @@ public class Parser {
             } else if (!parsingTable.containsKey(pair)) {
                 error("!parsingTable.containsKey");
             } else { // M[X, a] contains production
-
-                System.out.println(X + " -> " + parsingTable.get(pair)
+                System.out.print(String.format("%10s", ""));
+                System.out.println(X + " = " + parsingTable.get(pair)
                         .stream()
+                        .map(s -> {
+                            if(String.valueOf(s.charAt(0)).equals(String.valueOf(s.charAt(0)).toLowerCase()) && !s.equals(GrammarResources.getEpsilon())){
+                                return "'" + s + "'";
+                            }
+                            return s;
+                        })
                         .collect(Collectors.joining(" ")));
                 stack.pop();
 
@@ -505,7 +499,7 @@ public class Parser {
             X = stack.peek();
         }
 
-        System.out.println("Accepted!");
+        System.out.println("Aceito!");
     }
 
     private static boolean isTerminal(String symbol) {

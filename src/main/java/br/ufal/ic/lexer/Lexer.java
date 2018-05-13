@@ -154,6 +154,32 @@ public class Lexer {
                     }
 
                     break;
+                case ">":
+                    char ss = (char) file.read();    /* We cast to char because file.read() returns the data in bytes. */
+                    if (ss == '=') {     /* If next lexeme is '=', we create a new Token */
+                        current = current + "=";
+                        nextToken = new Token(TokenCategory.TK_REL, row, column - (current.length() - 1), current);
+                        current = "";
+                    } else {
+                        nextToken = new Token(TokenCategory.TK_REL, row, column, current);
+                        current = Character.toString(ss);
+                        rollback = true;
+                    }
+                    found = true;
+                    break;
+                case "<":
+                    char sss = (char) file.read();    /* We cast to char because file.read() returns the data in bytes. */
+                    if (sss == '=') {     /* If next lexeme is '=', we create a new Token */
+                        current = current + "=";
+                        nextToken = new Token(TokenCategory.TK_REL, row, column - (current.length() - 1), current);
+                        current = "";
+                    } else {
+                        nextToken = new Token(TokenCategory.TK_REL, row, column, current);
+                        current = Character.toString(sss);
+                        rollback = true;
+                    }
+                    found = true;
+                    break;
                 case "\"":  /* This double quote can define a new ctStr */
                     char d = (char) file.read(); /* Read next char */
                     /**

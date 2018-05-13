@@ -1,11 +1,13 @@
-S -> defmod id do Global RFuncoes endmod
-Global -> RDeclVar 
-RFuncoes -> Funcoes RFuncoes
-RFuncoes -> ''
-Funcoes -> def TipoFuncao id ( Parametro ) do Instrucao end
+S -> defmod id do Global DeclFuncoes endmod
+Global -> RDeclVar
+DeclFuncoes -> Funcao DeclFuncoes
+DeclFuncoes -> ''
+Funcao -> def TipoFuncao id ( Parametro ) do Instrucao end
 Return -> return Exp ;
 TipoFuncao -> Tipo FArr
-FArr -> [ ]
+FArr -> [ RFArr ]
+RFArr -> Exp
+RFArr -> ''
 FArr -> ''
 Tipo -> int
 Tipo -> void
@@ -25,15 +27,13 @@ Comando -> Until Comando
 Comando -> When Comando
 Comando -> TipoFixo id ComandoA ; Comando
 Comando -> id RArr ComandoX Comando
-ComandoX -> = Exp ; 
+ComandoX -> = Exp ;
 ComandoX -> ( ParFunc ) ;
-ComandoX -> '' 
-ComandoA -> = ComandoAX
-ComandoAX -> Exp 
+ComandoA -> = Exp
 ComandoA -> ''
 Comando -> Return
 Comando -> ''
-Atrib -> Id = Exp ; 
+Atrib -> Id = Exp ;
 Atrib -> ''
 Id -> id Arr
 RDeclVar -> DeclVar RDeclVar
@@ -45,9 +45,10 @@ RArr -> [ LRArr ]
 RArr -> ''
 LRArr -> Exp
 LRArr -> ''
-When -> when ( Exp ) do Instrucao Otherwise end
-Otherwise -> otherwise Instrucao
-Otherwise -> '' 
+When -> when ( Exp ) do Otherwise end
+Otherwise -> Instrucao OtherwiseR
+OtherwiseR -> otherwise Instrucao
+OtherwiseR -> ''
 Until -> until ( Exp ) do Instrucao end
 DoUntil -> do Instrucao till ( Exp ) end
 Rep -> rep ( VarControl , Exp , Id = Exp ) do Instrucao end
@@ -70,14 +71,14 @@ RExpRDois -> ''
 ExpRUm -> ExpConcat RExpRUm
 RExpRUm -> opr1 ExpConcat RExpRUm
 RExpRUm -> ''
-ExpConcat -> Expa RExpConcat 
+ExpConcat -> Expa RExpConcat
 RExpConcat -> $ Expa RExpConcat
 RExpConcat -> ''
 Expa -> Expm RExpa
-RExpa -> opa Expm RExpa 
+RExpa -> opa Expm RExpa
 RExpa -> ''
 Expm -> ExpU RExpm
-RExpm -> opm ExpU RExpm 
+RExpm -> opm ExpU RExpm
 RExpm -> ''
 ExpU -> Unario Fa
 ExpU -> Fa
@@ -92,4 +93,6 @@ Cte -> cteI
 Cte -> cteR
 Cte -> cteStr
 Cte -> cteChar
-Cte -> cteBool
+Cte -> CteBool
+CteBool -> true
+CteBool -> false

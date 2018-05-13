@@ -26,8 +26,8 @@ public class Application {
         /* List of tokens that have been identified */
         tokenList = new ArrayList<>();
         /* Path to language examples used to test the scanner */
-        //String path = "/Users/dayvsonsales/";
-        String path = "/home/lativ/IdeaProjects/";
+        String path = "/Users/dayvsonsales/";
+        //String path = "/home/lativ/IdeaProjects/";
 
         if (fromCli) {
             if (args.length <= 0) {
@@ -56,24 +56,22 @@ public class Application {
     }
 
     private static void doScanner(String path, Lexer lexer) {
-        readFiles(String.join("", path, "cpl-bim1/examples/hello.hs"), lexer);
+        readFiles(String.join("", path, "cpl-bim1/examples/fib.hs"), lexer);
     }
 
     private static void doParser(String grammar, String codePath, Lexer lexer) {
         GrammarResources.initGrammar(grammar);
         Parser.fillParsingTable();
 
-        List<String> input = Application.
-                getAllTokens(
-                        String.join("",codePath, "cpl-bim1/examples/hello.hs"),
-                        lexer);
+        List<Token> input = tokenList;
 
-        input.add("EOF");
+        input.add(new Token(TokenCategory.TK_EOF));
 
-        System.out.println();
-        System.out.println("MOVES MADE for input < " + input.stream().
-                filter(item -> !item.equals("EOF")).
-                collect(Collectors.joining(" ")) + " >: ");
+        /*System.out.println();
+        System.out.println("MOVES MADE for input < " + input.stream()
+                .map(t -> {return t.getTag().getValue(); })
+                .filter(item -> !item.equals("EOF"))
+                .collect(Collectors.joining(" ")) + " >: ");*/
 
         try {
             Parser.predictiveParsing(input);
@@ -125,8 +123,8 @@ public class Application {
         }
     }
 
-    private static List<String> getAllTokens(String path, Lexer lexer) {
-        List<String> allTokens = null;
+    private static List<Token> getAllTokens(String path, Lexer lexer) {
+        List<Token> allTokens = null;
 
         try {
             lexer.setFile(new FileInputStream(path));
@@ -140,7 +138,7 @@ public class Application {
 
             while (lexer.getFile().available() > 0 || lexer.isRollback()) {
                 currentToken = lexer.nextToken();
-                allTokens.add(currentToken.getTag().getValue());
+                allTokens.add(currentToken);
             }
         } catch (IOException e) {
             System.err.println("erro na leitura do contéudo do código fonte");
@@ -167,7 +165,7 @@ public class Application {
                 .map(tk -> tk.getTag() + " ")
                 .collect(Collectors.toList());
 
-        System.out.print(String.format("%04d  ", inLineTks.get(0).getRow()));
+        System.out.print(String.format("%4d  ", inLineTks.get(0).getRow()));
         tks.forEach(System.out::print);
         System.out.println();
 
