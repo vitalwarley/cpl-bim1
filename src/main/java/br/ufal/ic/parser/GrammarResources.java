@@ -107,4 +107,39 @@ public class GrammarResources {
         return follows;
     }
 
+    public static void printGrammarAlcinoMode(String grammarPath){
+        try (Stream<String> stream = Files.lines(Paths.get(grammarPath))) {
+            grammar = stream.collect(Collectors.toList());
+
+            List<String> list = grammar.stream().
+                    map(s -> {
+                        s = s.replaceAll("->", "=");
+                        s = s.replaceAll("''", "epsilon");
+                        String [] rr = s.split(" ");
+                        StringBuilder sb = new StringBuilder();
+                        for(String a : rr){
+                            if(String.valueOf(a.charAt(0)).equals(String.valueOf(a.charAt(0)).toLowerCase()) && a.charAt(0) != '=' && !a.equals("epsilon")){
+                                sb.append(" ");
+                                sb.append("'");
+                                sb.append(a);
+                                sb.append("'");
+                            }else{
+                                sb.append(" ");
+                                sb.append(a);
+                            }
+                        }
+                        return sb.toString();
+                    }).
+                    collect(Collectors.toList());
+            list.forEach(System.out::println);
+
+        } catch (IOException e) {
+            System.err.println("Não foi possível ler o arquivo que contém a gramática.");
+        }
+    }
+
+    public static void main(String args[]){
+        GrammarResources.printGrammarAlcinoMode("grammar_ll1.txt");
+    }
+
 }

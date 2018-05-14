@@ -42,10 +42,10 @@ public class Application {
             /*
              * Example codes.
              */
-            System.out.println("Start: hello.hs");
+            System.out.println("Start: ");
             doScanner(path, lexer);
             doParser("grammar_ll1.txt", path, lexer);
-            System.out.println("End: hello.hs");
+            System.out.println("End: ");
             /*System.out.println("Start: fib.hs");
             readFiles(String.join("", path, "cpl-bim1/examples/fib.hs"), new Lexer());
             System.out.println("End: fib.hs");
@@ -56,7 +56,7 @@ public class Application {
     }
 
     private static void doScanner(String path, Lexer lexer) {
-        readFiles(String.join("", path, "cpl-bim1/examples/fib.hs"), lexer);
+        readFiles(String.join("", path, "cpl-bim1/examples/shell.hs"), lexer);
     }
 
     private static void doParser(String grammar, String codePath, Lexer lexer) {
@@ -162,7 +162,7 @@ public class Application {
 
         List<String> tks = inLineTks
                 .stream()
-                .map(tk -> tk.getTag() + " ")
+                .map(tk -> tk.getValue() + " ")
                 .collect(Collectors.toList());
 
         System.out.print(String.format("%4d  ", inLineTks.get(0).getRow()));
