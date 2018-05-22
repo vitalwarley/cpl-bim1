@@ -1,4 +1,4 @@
-package br.ufal.ic.lexer.test;
+package lexer;
 
 import br.ufal.ic.lexer.Lexer;
 import br.ufal.ic.lexer.Token;

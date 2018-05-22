@@ -1,5 +1,8 @@
 package br.ufal.ic.parser;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -9,17 +12,15 @@ import java.util.stream.Stream;
 
 public class GrammarResources {
 
-    private static final String epsilon = "𝛜";
+    private static final Logger logger = LoggerFactory.getLogger(GrammarResources.class);
+
+    private static final String epsilon = "epsilon";
 
     private static List<String> grammar;
     private static Set<String> nonTerminals;
     private static Map<String, List<String>> productions = new HashMap<>();
 
-    private static Map<String, List<String>> firsts;
-    private static Map<String, List<String>> follows;
-
-    public static void initGrammar(String grammarPath) {
-
+    public static void initGrammar(String grammarPath) throws IOException {
         try (Stream<String> stream = Files.lines(Paths.get(grammarPath))) {
             grammar = stream.collect(Collectors.toList());
 
@@ -31,39 +32,9 @@ public class GrammarResources {
                     collect(Collectors.toSet());
 
         } catch (IOException e) {
-            System.err.println("Não foi possível ler o arquivo que contém a gramática.");
+            logger.error("Não foi possível ler o arquivo que contém a gramática.", e.getMessage());
+            throw new IllegalArgumentException("Path inválido");
         }
-    }
-
-    public static void initFirstsAndFollows() {
-        firsts = new HashMap<>();
-        follows = new HashMap<>();
-
-        firsts.put("F", Arrays.asList("(", "id"));
-        firsts.put("T", Arrays.asList("(", "id"));
-        firsts.put("E", Arrays.asList("(", "id"));
-        firsts.put("E'", Arrays.asList("+", epsilon));
-        firsts.put("T'", Arrays.asList("*", epsilon));
-
-        follows.put("E", Arrays.asList(")", "$"));
-        follows.put("E'", Arrays.asList(")", "$"));
-        follows.put("T", Arrays.asList("+", ")", "$"));
-        follows.put("T'", Arrays.asList("+", ")", "$"));
-        follows.put("F", Arrays.asList("+", "*", ")", "$"));
-    }
-
-    public static void showFirstsOrFollows(Map<String, List<String>> set, String setName) {
-        System.out.println(setName.toUpperCase() + ": ");
-
-        set. // first or follow
-                keySet().
-                forEach(k -> {
-                    System.out.print(k + ": { ");
-                    set
-                            .get(k)
-                            .forEach(f -> System.out.print(f + " "));
-                    System.out.println("}");
-                });
     }
 
     private static void addProduction(String rule) {
@@ -79,14 +50,6 @@ public class GrammarResources {
         }
     }
 
-    public static void showProductions() {
-        productions
-                .keySet()
-                .forEach(k -> productions
-                        .get(k)
-                        .forEach(p -> System.out.println(k + " -> " + p)));
-    }
-
     public static boolean checkSymbolIsTerminal(String symbol) {
         return !nonTerminals.contains(symbol);
     }
@@ -94,52 +57,4 @@ public class GrammarResources {
     public static String getEpsilon() {
         return epsilon;
     }
-
-    public static Map<String, List<String>> getProductions() {
-        return productions;
-    }
-
-    public static Map<String, List<String>> getFirsts() {
-        return firsts;
-    }
-
-    public static Map<String, List<String>> getFollows() {
-        return follows;
-    }
-
-    public static void printGrammarAlcinoMode(String grammarPath){
-        try (Stream<String> stream = Files.lines(Paths.get(grammarPath))) {
-            grammar = stream.collect(Collectors.toList());
-
-            List<String> list = grammar.stream().
-                    map(s -> {
-                        s = s.replaceAll("->", "=");
-                        s = s.replaceAll("''", "epsilon");
-                        String [] rr = s.split(" ");
-                        StringBuilder sb = new StringBuilder();
-                        for(String a : rr){
-                            if(String.valueOf(a.charAt(0)).equals(String.valueOf(a.charAt(0)).toLowerCase()) && a.charAt(0) != '=' && !a.equals("epsilon")){
-                                sb.append(" ");
-                                sb.append("'");
-                                sb.append(a);
-                                sb.append("'");
-                            }else{
-                                sb.append(" ");
-                                sb.append(a);
-                            }
-                        }
-                        return sb.toString();
-                    }).
-                    collect(Collectors.toList());
-            list.forEach(System.out::println);
-
-        } catch (IOException e) {
-            System.err.println("Não foi possível ler o arquivo que contém a gramática.");
-        }
-    }
-
-    public static void main(String args[]){
-        GrammarResources.printGrammarAlcinoMode("grammar_ll1.txt");
-    }
-
 }

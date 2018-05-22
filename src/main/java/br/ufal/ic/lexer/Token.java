@@ -13,6 +13,10 @@ public class Token {
 
     public Token(TokenCategory tag) {
         this.tag = tag;
+        this.msg = "";
+        this.error = false;
+        this.row = 1;
+        this.column = 1;
     }
 
     public Token(TokenCategory tag, int row, int column, String value) {
