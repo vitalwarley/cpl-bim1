@@ -1,5 +1,9 @@
 package br.ufal.ic.lexer;
 
+import br.ufal.ic.lexer.enums.TokenCategory;
+import br.ufal.ic.lexer.models.Token;
+import br.ufal.ic.lexer.models.Word;
+
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Hashtable;
@@ -111,8 +115,6 @@ public class Lexer {
                             } else {
                                 current = current + aux;
                             }
-                        } else {
-                            current = current + aux;
                         }
                     } else { /* c is not a escape */
                         /*

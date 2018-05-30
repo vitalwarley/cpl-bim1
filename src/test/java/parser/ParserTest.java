@@ -1,7 +1,7 @@
 package parser;
 
-import br.ufal.ic.lexer.Token;
-import br.ufal.ic.lexer.TokenCategory;
+import br.ufal.ic.lexer.models.Token;
+import br.ufal.ic.lexer.enums.TokenCategory;
 import br.ufal.ic.parser.GrammarResources;
 import br.ufal.ic.parser.Parser;
 import br.ufal.ic.parser.ParsingTable;

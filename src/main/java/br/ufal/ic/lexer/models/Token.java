@@ -1,4 +1,6 @@
-package br.ufal.ic.lexer;
+package br.ufal.ic.lexer.models;
+
+import br.ufal.ic.lexer.enums.TokenCategory;
 
 import java.util.Objects;
 

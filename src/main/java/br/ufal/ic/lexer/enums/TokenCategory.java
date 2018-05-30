@@ -1,4 +1,4 @@
-package br.ufal.ic.lexer;
+package br.ufal.ic.lexer.enums;
 
 public enum TokenCategory {
     TK_ID("id"),

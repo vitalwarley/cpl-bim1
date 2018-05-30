@@ -1,8 +1,8 @@
 package lexer;
 
 import br.ufal.ic.lexer.Lexer;
-import br.ufal.ic.lexer.Token;
-import br.ufal.ic.lexer.TokenCategory;
+import br.ufal.ic.lexer.models.Token;
+import br.ufal.ic.lexer.enums.TokenCategory;
 import br.ufal.ic.lexer.i18n.MessageBR;
 import org.junit.jupiter.api.Test;
 
@@ -234,6 +234,149 @@ class LexerTest {
     }
 
     @Test
+    void atribuicao() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/atribuicao.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(
+                TokenCategory.TK_ATR, 1, 1, "="));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void igual() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/igual.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+
+        expected.add(new Token(
+                TokenCategory.TK_REL2, 1, 1, "=="));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void comentarios() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/comentarios.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void escapeCaso1() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/escape.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 2, "\""));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void escapeCaso2() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/escapeFinal.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_CTECHAR, 1, 2, "\\"));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void maiorIgual() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/maiorIgual.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_REL, 1, 1, ">="));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void menorIgual() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/menorIgual.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_REL, 1, 1, "<="));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void maior() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/maior.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_REL, 1, 1, ">"));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void menor() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/menor.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_REL, 1, 1, "<"));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
+    void naoReal() {
+        Lexer lexer = new Lexer();
+
+        List<Token> actual = readFiles(String.join("", path,
+                "/cpl-bim1/examples/test/naoReal.hs"), lexer);
+
+        List<Token> expected = new ArrayList<>();
+        expected.add(new Token(TokenCategory.TK_CTEREAL, 1, 1, "3.", true, MessageBR.CTEREAL_ERR));
+        expected.add(new Token(TokenCategory.TK_EOF, 2, 1, ""));
+
+        assertThat(actual, is(expected));
+    }
+
+    @Test
     void aspasJuntas() {
         Lexer lexer = new Lexer();
 
@@ -264,7 +407,6 @@ class LexerTest {
         assertThat(actual, is(expected));
 
     }
-
 
     private static List<Token> readFiles(String name, Lexer lexer) {
 

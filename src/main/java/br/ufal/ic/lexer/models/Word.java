@@ -1,4 +1,6 @@
-package br.ufal.ic.lexer;
+package br.ufal.ic.lexer.models;
+
+import br.ufal.ic.lexer.enums.TokenCategory;
 
 /* Class used to reserved words and identifiers. */
 public class Word extends Token {

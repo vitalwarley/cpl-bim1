@@ -1,8 +1,8 @@
 package br.ufal.ic;
 
 import br.ufal.ic.lexer.Lexer;
-import br.ufal.ic.lexer.Token;
-import br.ufal.ic.lexer.TokenCategory;
+import br.ufal.ic.lexer.models.Token;
+import br.ufal.ic.lexer.enums.TokenCategory;
 import br.ufal.ic.parser.GrammarResources;
 import br.ufal.ic.parser.Parser;
 import br.ufal.ic.parser.ParsingTable;
@@ -12,6 +12,8 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -29,13 +31,12 @@ public class Application {
 
     public static void main(String[] args) {
         boolean fromCli = true;
-        /* Lexical analyser  */
+
         Lexer lexer = new Lexer();
-        /* List of tokens that have been identified */
+
         tokenList = new ArrayList<>();
-        /* Path to language examples used to test the scanner */
+
         String path = "/Users/dayvsonsales/";
-        //String path = "/home/lativ/IdeaProjects/";
 
         if (fromCli) {
             if (args.length <= 0) {
@@ -48,19 +49,10 @@ public class Application {
                 System.out.println("End: " + source);
             }
         } else {
-            /*
-             * Example codes.
-             */
             System.out.println("Start: ");
             doScanner(path, lexer);
             doParser("grammar_ll1.txt", path, lexer);
             System.out.println("End: ");
-            /*System.out.println("Start: fib.hs");
-            readFiles(String.join("", path, "cpl-bim1/examples/fib.hs"), new Lexer());
-            System.out.println("End: fib.hs");
-            System.out.println("Start: shell.hs");
-            readFiles(String.join("", path, "cpl-bim1/examples/shell.hs"), new Lexer());
-            System.out.println("End: shell.hs");*/
         }
     }
 
@@ -108,9 +100,8 @@ public class Application {
         }
 
         try {
-            /* Take next token while there is data on the file to be read */
             Token currentToken = null;
-            // new
+
             List<Token> inLineTks = new ArrayList<>();
             int actualRow = 1;
 
@@ -135,7 +126,6 @@ public class Application {
                 tokenList.add(new Token(TokenCategory.TK_EOF, currentToken.getRow(), currentToken.getColumn() + 1, ""));
                 System.out.println(tokenList.get(tokenList.size() - 1));
             }
-            /* Print last token: EOF */
 
         } catch (IOException e) {
             logger.error("Erro ao ler arquivo", e.getMessage());
@@ -154,33 +144,8 @@ public class Application {
         return lines;
     }
 
-    private static List<Token> getAllTokens(String path, Lexer lexer) {
-        List<Token> allTokens = null;
-
-        try {
-            lexer.setFile(new FileInputStream(path));
-        } catch (FileNotFoundException e) {
-            logger.error("erro na leitura do código fonte!", e.getMessage());
-        }
-
-        try {
-            Token currentToken;
-            allTokens = new ArrayList<>();
-
-            while (lexer.getFile().available() > 0 || lexer.isRollback()) {
-                currentToken = lexer.nextToken();
-                allTokens.add(currentToken);
-            }
-        } catch (IOException e) {
-            logger.error("erro na leitura do contéudo do código fonte", e.getMessage());
-        }
-
-        return allTokens;
-    }
-
     private static int checkRowToken(List<Token> inLineTks, Token currentToken, int actualRow) {
         if (currentToken.getRow() != actualRow) {
-            //printTokensInLine(inLineTks);
             inLineTks.clear();
         }
 
@@ -189,16 +154,4 @@ public class Application {
         return currentToken.getRow();
     }
 
-    private static void printTokensInLine(List<Token> inLineTks) {
-
-        List<String> tks = inLineTks
-                .stream()
-                .map(tk -> tk.getValue() + " ")
-                .collect(Collectors.toList());
-
-        System.out.print(String.format("%4d  ", inLineTks.get(0).getRow()));
-        tks.forEach(System.out::print);
-        System.out.println();
-
-    }
 }

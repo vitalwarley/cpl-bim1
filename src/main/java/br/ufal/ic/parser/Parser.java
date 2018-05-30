@@ -1,7 +1,7 @@
 package br.ufal.ic.parser;
 
-import br.ufal.ic.lexer.Token;
-import br.ufal.ic.lexer.TokenCategory;
+import br.ufal.ic.lexer.models.Token;
+import br.ufal.ic.lexer.enums.TokenCategory;
 import javafx.util.Pair;
 
 import java.util.*;
@@ -9,17 +9,17 @@ import java.util.stream.Collectors;
 
 public class Parser {
 
-    private Stack<String> stack = new Stack<>(); // see Deque and ArrayDeque instead
+    private Stack<String> stack = new Stack<>();
     private final Hashtable<Pair<String, String>, List<String>> parsingTable;
 
-    public Parser(Hashtable<Pair<String, String>, List<String>> parsingTable){
+    public Parser(Hashtable<Pair<String, String>, List<String>> parsingTable) {
         this.parsingTable = parsingTable;
     }
 
     @SuppressWarnings("unchecked")
     public boolean predictiveParsing(List<Token> input, List<String> lines) throws EmptyStackException {
 
-        if(input.get(input.size()-1).getTag() != TokenCategory.TK_EOF){
+        if (input.get(input.size() - 1).getTag() != TokenCategory.TK_EOF) {
             return false;
         }
 
@@ -27,7 +27,7 @@ public class Parser {
 
         Token next = input.get(count);
 
-        if(next.isError()){
+        if (next.isError()) {
             error(next.getMsg());
             return false;
         }
@@ -43,17 +43,17 @@ public class Parser {
 
         while (!X.equals("EOF")) {
 
-            if(next.isError()){
+            if (next.isError()) {
                 error(next.getMsg());
                 return false;
             }
 
             pair = new Pair(X, next.getTag().getValue());
 
-            if(next.getRow() != currentLine){
+            if (next.getRow() != currentLine) {
                 System.out.println();
                 System.out.print(String.format("%4d  ", next.getRow()));
-                System.out.println(lines.get(next.getRow()-1));
+                System.out.println(lines.get(next.getRow() - 1));
                 currentLine = next.getRow();
                 System.out.println();
             }
@@ -78,7 +78,7 @@ public class Parser {
                 System.out.println(X + " = " + parsingTable.get(pair)
                         .stream()
                         .map(s -> {
-                            if(String.valueOf(s.charAt(0)).equals(String.valueOf(s.charAt(0)).toLowerCase()) && !s.equals(GrammarResources.getEpsilon())){
+                            if (String.valueOf(s.charAt(0)).equals(String.valueOf(s.charAt(0)).toLowerCase()) && !s.equals(GrammarResources.getEpsilon())) {
                                 return "'" + s + "'";
                             }
                             return s;
@@ -111,7 +111,9 @@ public class Parser {
 
     private static List<String> reverseProduction(List<String> production) {
         int size = production.size();
+
         Stack<String> productionReversed = new Stack<>();
+
         for (int i = size - 1; i >= 0; i--)
             productionReversed.add(production.get(i));
 

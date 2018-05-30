@@ -381,9 +381,9 @@ public class ParsingTable {
         parsingTable.put(pair, production);
     }
 
-    public static Hashtable<Pair<String, String>, List<String>> getParsingTable(){
+    public static Hashtable<Pair<String, String>, List<String>> getParsingTable() {
 
-        if(parsingTable == null){
+        if (parsingTable == null) {
             parsingTable = new Hashtable<>();
             fillParsingTable();
         }
